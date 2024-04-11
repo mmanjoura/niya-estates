@@ -78,20 +78,18 @@ func getUser(c *gin.Context, userEmail string) (models.User, error) {
 
 	err := db.QueryRowContext(c, `
 	SELECT id,
-       firstname,
-       lastname,
+       full_name,
        email,
        password,
-	   isAdmin,
+	   user_type,
        Updated_At,
        Created_At
   FROM Users WHERE email = ?`, userEmail).
 		Scan(&user.ID,
-			&user.FirstName,
-			&user.LastName,
+			&user.FullName,
 			&user.Email,
 			&user.Password,
-			&user.IsAdmin,
+			&user.UserType,
 			&user.UpdatedAt,
 			&user.CreatedAt,
 		)

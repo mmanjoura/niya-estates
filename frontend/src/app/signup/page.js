@@ -7,6 +7,14 @@ import { useState } from "react";
 export default function SignUp() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  const [full_name, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isPasswordMatch, setIsPasswordMatch] = useState(true);
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
@@ -15,10 +23,46 @@ export default function SignUp() {
   };
   const confirmInputType = isConfirmPasswordVisible ? 'text' : 'password';
   const inputType = isPasswordVisible ? 'text' : 'password';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setIsPasswordMatch(false);    
+      console.log(isPasswordMatch);
+
+      return;
+    }
+    
+    const res = await fetch(baseURL+'/auth/register', {  
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        full_name,
+        email,
+        password
+      }),
+    });
+    const data = await res.json();
+    console.log(data);
+    if (data.error) {
+      setError(data.error);
+    } else {
+      console.log(data);
+      window.location.href = "/signin";
+    }
+  }
+
   return (
     <Layout>
       {/* Start Main Content */}
+
+      <form className="register-form" onSubmit={handleSubmit}> 
+   
+ 
       <div className="main-content">
+  
         <div className="border-bottom py-3">
           <div className="container">
             {/* Start Back To Search */}
@@ -81,17 +125,24 @@ export default function SignUp() {
                       <hr className="flex-grow-1 m-0" />
                     </div>
                     {/* /.End Divider */}
-                    <form className="register-form">
+                      {isPasswordMatch === false && (
+                        <div className="alert alert-danger" role="alert">
+                          Passwords do not match
+                        </div>
+                      )
+                      }
+
                       {/* Start Form Group */}
                       <div className="form-group mb-4">
+                    
                         <label className="required">Full Name</label>
-                        <input type="text" className="form-control" required />
+                        <input type="text" className="form-control" required onChange={ e => setFullName(e.target.value)}/>
                       </div>
                       {/* /.End Form Group */}
                       {/* Start Form Group */}
                       <div className="form-group mb-4">
                         <label className="required">Enter Email</label>
-                        <input type="email" className="form-control" />
+                        <input type="email" className="form-control" required onChange={ e => setEmail(e.target.value)}/>
                       </div>
                       {/* /.End Form Group */}
                       {/* Start Form Group */}
@@ -102,6 +153,7 @@ export default function SignUp() {
                           type={inputType}
                           className="form-control password"
                           autoComplete="off"
+                          required onChange={ e => setPassword(e.target.value)}
                         />
                         <i
                           className={`toggle-password ${isPasswordVisible ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'
@@ -118,6 +170,7 @@ export default function SignUp() {
                           type={confirmInputType}
                           className="form-control c-password"
                           autoComplete="off"
+                          required onChange={ e => setConfirmPassword(e.target.value)}
                         />
                          <i
                           className={`toggle-password ${isConfirmPasswordVisible ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'
@@ -140,7 +193,7 @@ export default function SignUp() {
                         Sign Up
                       </button>
                       {/* End Button */}
-                    </form>
+                
                     {/* Start Bottom Text */}
                     <div className="bottom-text text-center mt-3"> Already have an account? <Link href="signin" className="fw-medium text-decoration-underline">Sign In</Link> </div>
                     {/* /.End Bottom Text */}
@@ -159,8 +212,10 @@ export default function SignUp() {
             </div>
           </div>
         </div>
+
       </div>
+      </form>
       {/* /. End Main Content */}
     </Layout>
   );
-}
+};

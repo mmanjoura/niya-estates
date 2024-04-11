@@ -113,7 +113,7 @@ func RegisterHandler(c *gin.Context) {
 	}
 
 	// Execute the SQL query to insert a new user
-	_, err = db.Exec("INSERT INTO users (full_name, email, password, user_type Created_At, Updated_At) VALUES (?, ?, ?, ?, ?, ?)",
+	_, err = db.Exec("INSERT INTO users (full_name, email, password, user_type, Created_At, Updated_At) VALUES (?, ?, ?, ?, ?, ?)",
 		newUser.FullName,  newUser.Email, newUser.Password, newUser.UserType, newUser.CreatedAt, newUser.UpdatedAt)
 
 	if err != nil {

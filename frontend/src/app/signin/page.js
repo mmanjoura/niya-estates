@@ -6,14 +6,45 @@ import { useState } from "react";
 
 export default function SignIn() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [full_name, setFullName] = useState("");
+  const [error, setError] = useState("");
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
   const inputType = isPasswordVisible ? 'text' : 'password';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+ 
+    const res = await fetch(baseURL+'/auth/login', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        full_name,
+        email,
+        password
+      }),
+    });
+    const data = await res.json();
+    console.log(data);
+    if (data.error) {
+      setError(data.error);
+    } else {
+      console.log(data);
+      window.location.href = "/";
+    }
+  }
   return (
 
     <Layout>
       {/* Start Main Content */}
+      <form className="register-form" onSubmit={handleSubmit}>
       <div className="main-content">
         <div className="border-bottom py-3">
           <div className="container">
@@ -75,14 +106,16 @@ export default function SignIn() {
                       <hr className="flex-grow-1 m-0" />
                     </div>
                     {/* /.End Divider */}
-                    <form className="register-form">
+               
                       {/* Start Form Group */}
                       <div className="form-group mb-4">
                         <label className="required">Enter Email</label>
                         <input
                           type="email"
                           className="form-control is-invalid"
-                          required
+                          onChange={(e) => setEmail(e.target.value) }
+                          value={email}
+                          
                         />
                         <div className="invalid-feedback text-start">
                           Enter your valid email
@@ -97,6 +130,8 @@ export default function SignIn() {
                           type={inputType}
                           className="form-control password"
                           autoComplete="off"
+                          onChange={(e) => setPassword(e.target.value)}
+                          value={password}
                         />
                          <i
                           className={`toggle-password ${isPasswordVisible ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'
@@ -129,7 +164,7 @@ export default function SignIn() {
                         Sign in
                       </button>
                       {/* /.End Button */}
-                    </form>
+                 
                     {/* Start Bottom Text */}
                     <div className="bottom-text text-center my-3"> Don't have an account? <Link href="signup" className="fw-medium text-decoration-underline">Sign Up</Link>
                       <br></br> Remind <Link href="forgot-password" className="fw-medium text-decoration-underline">Password</Link>
@@ -151,6 +186,7 @@ export default function SignIn() {
           </div>
         </div>
       </div>
+      </form>
       {/* /. End Main Content */}
     </Layout>
 
