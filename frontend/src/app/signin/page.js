@@ -1,5 +1,5 @@
 
-"use client"
+'use client';
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import { useState } from "react";
@@ -9,13 +9,16 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [full_name, setFullName] = useState("");
+  const [user_type, setUserType] = useState("");
   const [error, setError] = useState("");
+
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
-  const inputType = isPasswordVisible ? 'text' : 'password';
+  const inputType = isPasswordVisible ? 'text' : 'password';    
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,21 +27,25 @@ export default function SignIn() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "credentials": "include",       
       },
       body: JSON.stringify({
         full_name,
         email,
-        password
+        password,
+        user_type
       }),
     });
+    
     const data = await res.json();
-    console.log(data);
     if (data.error) {
       setError(data.error);
-    } else {
-      console.log(data);
-      window.location.href = "/";
+      window.location.href = "/signin";
     }
+
+    window.localStorage.setItem('user_type', data?.user?.user_type);
+    window.localStorage.setItem('full_name', data?.user?.full_name);   
+    window.location.href = "/post-property";
   }
   return (
 

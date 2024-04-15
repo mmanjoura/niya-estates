@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import ProtectAdminRoute from "./utils/ProtectAdminRoute";
 const links = [
-    { href: '/properties-list?house-type=buy', text: 'Buy' },
-    { href: '/properties-list?house-type=rent', text: 'Rent' },
-    { href: '/properties-list?house-type=new', text: 'New Houses' },
-    { href: '/properties-list?house-type=commercial', text: 'Commercial' },
+    { href: '/properties-list?property-type=buy', text: 'Buy' },
+    { href: '/properties-list?property-type=rent', text: 'Rent' },
+    { href: '/properties-list?property-type=new', text: 'New Houses' },
+    { href: '/properties-list?property-type=commercial', text: 'Commercial' },
   
 
     { href: '/#', text: 'Property Management' },
@@ -43,6 +44,15 @@ const links = [
 export default function Header() {
     const [hasLogo, setHasLogo] = useState(false);
     const path=usePathname()
+    const user = ProtectAdminRoute();
+    console.log("User Type", user)
+
+    function handleLogoutClick() {
+    //   remove user info from local storage
+        window.localStorage.removeItem('user_type');
+        window.localStorage.removeItem('full_name');
+      }
+
     useEffect(() => {
         const handleScroll = () => {
             const scroll = window.scrollY;
@@ -143,9 +153,13 @@ export default function Header() {
                                                   }
                                     </ul>
                                 </li>
-                                <li className="nav-item"><Link className="nav-link" href="properties-list?house-type=new">New Houses</Link></li>
+                                <li className="nav-item"><Link className="nav-link" href="properties-list?property-type=new">New Houses</Link></li>
                             
                                 <li className="nav-item"><Link className="nav-link" href="contact">Contact</Link></li>
+                                {/* Show admin link if the user is user */}
+                                {user && <li className="nav-item"><Link className="nav-link" href="post-property">Post Property</Link></li>}
+                        
+                            
                             </ul>
                         </div>
                         {/*  /. End Navbar Collapse */}
@@ -161,11 +175,19 @@ export default function Header() {
                             <Link href="/" className="btn btn-primary d-none d-sm-inline-block d-xl-none"><i className="fa-solid fa-house"></i></Link>
                             {/*  /. End Cart Button */}
                             {/* Start Login & Signup Button */}
+                            {user ?
+                            <Link href="signin" className="btn btn-primary btn-login hstack gap-2" onClick={handleLogoutClick}>
+                                <i className="fa-solid fa-arrow-right-to-bracket"></i>
+                                <div className="vr d-none d-sm-inline-block"></div>
+                                <span className="d-none d-sm-inline-block">Logout</span>
+                            </Link>
+                            :
                             <Link href="signin" className="btn btn-primary btn-login hstack gap-2">
                                 <i className="fa-solid fa-arrow-right-to-bracket"></i>
                                 <div className="vr d-none d-sm-inline-block"></div>
                                 <span className="d-none d-sm-inline-block">Login / Signup</span>
                             </Link>
+                            }
                             {/* /. End Login & Signup Button */}
                             {/*  Start Navbar Toggler Buton */}
                             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

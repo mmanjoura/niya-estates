@@ -15,15 +15,11 @@ import (
 )
 
 const (
-	noTourType = iota
-	Flights
-	Tours
-	Hotels
-	Rentals
-	Cars
-	Golfs
-
-	Activities
+	noPropertyType = iota
+	Buy
+	Rent
+	New
+	Commercial
 )
 const (
 	// silide Image
@@ -54,29 +50,24 @@ func BuildCondition(referrerId, categoryId int) string {
 	return condition
 }
 
-func GetCategoryId(productType string) (int, error) {
-	var categoryId int
+func GetPropertyTypeId(PropertyType string) (int, error) {
+	var propertyTypeId int
 
-	switch productType {
-	case "TOUR":
-		categoryId = Tours
-	case "FLIGHT":
-		categoryId = Flights
-	case "HOTEL":
-		categoryId = Hotels
-	case "RENTAL":
-		categoryId = Rentals
-	case "CAR":
-		categoryId = Cars
-	case "GOLF":
-		categoryId = Golfs
-	case "ACTIVITY":
-		categoryId = Activities
+	switch PropertyType {
+	case "BUY":
+		propertyTypeId = Buy
+	case "RENT":
+		propertyTypeId = Rent
+	case "COMMERCIAL":
+		propertyTypeId = Commercial
+	case "NEW":
+		propertyTypeId = New
+
 	default:
-		return 0, fmt.Errorf("Invalid product type")
+		return 0, fmt.Errorf("Invalid property type")
 	}
 
-	return categoryId, nil
+	return propertyTypeId, nil
 }
 
 // ProcessImage takes an image name, crop sizes, and resize dimensions as parameters

@@ -12,7 +12,7 @@ func APIKeyAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		config := database.Database.Config
-		apiKey := c.GetHeader("X-API-Key")
+		apiKey := c.GetHeader("JWT-API-KEY")
 		if apiKey == config["JWT-API-KEY"] {
 
 			c.Next()

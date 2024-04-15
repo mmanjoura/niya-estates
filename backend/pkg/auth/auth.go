@@ -27,12 +27,12 @@ var JwtKey = []byte("k1U6pO+9qZteWy+yE52Z56qSBqmJ1orl27r/28AfkIA=")
 
 // @BasePath /api/v1
 
-
 func LoginHandler(c *gin.Context) {
 	var incomingUser models.SignIn
 	var dbUser models.User
 	db := database.Database.DB
-
+	config := database.Database.Config
+	JwtKey := config["JWT-API-KEY"]
 	// Get JSON body
 	if err := c.ShouldBindJSON(&incomingUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
@@ -41,7 +41,7 @@ func LoginHandler(c *gin.Context) {
 
 	// Fetch the user from the database
 	err := db.QueryRow("SELECT id, full_name, email, password, user_type, Created_At, Updated_At FROM users WHERE email = ?", incomingUser.Email).
-		Scan(&dbUser.ID, &dbUser.FullName,  &dbUser.Email, &dbUser.Password, &dbUser.UserType, &dbUser.CreatedAt, &dbUser.UpdatedAt)
+		Scan(&dbUser.ID, &dbUser.FullName, &dbUser.Email, &dbUser.Password, &dbUser.UserType, &dbUser.CreatedAt, &dbUser.UpdatedAt)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -64,6 +64,8 @@ func LoginHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
 		return
 	}
+
+	c.Request.Header.Add("JWT-API-KEY", JwtKey)
 	c.SetSameSite(http.SameSiteNoneMode)
 	// Set a cookie named "Authorization" with the provided token value
 	// Replace "yourdomain.com" with the appropriate domain for your Cloud Run service
@@ -103,18 +105,17 @@ func RegisterHandler(c *gin.Context) {
 
 	// Create new user
 	newUser := models.User{
-		FullName: user.FullName,
-		Email:  user.Email,
+		FullName:  user.FullName,
+		Email:     user.Email,
 		Password:  hashedPassword,
 		UserType:  "user",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-
 	}
 
 	// Execute the SQL query to insert a new user
 	_, err = db.Exec("INSERT INTO users (full_name, email, password, user_type, Created_At, Updated_At) VALUES (?, ?, ?, ?, ?, ?)",
-		newUser.FullName,  newUser.Email, newUser.Password, newUser.UserType, newUser.CreatedAt, newUser.UpdatedAt)
+		newUser.FullName, newUser.Email, newUser.Password, newUser.UserType, newUser.CreatedAt, newUser.UpdatedAt)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not save user"})
@@ -130,6 +131,9 @@ func HashPassword(password string) (string, error) {
 }
 
 func GenerateToken(email string) (string, error) {
+	config := database.Database.Config
+	JwtKey := []byte(config["JWT-API-KEY"])
+
 	// The expiration time after which the token will be invalid.
 	expirationTime := time.Now().Add(12 * time.Hour).Unix()
 

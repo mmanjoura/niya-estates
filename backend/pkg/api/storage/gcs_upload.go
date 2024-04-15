@@ -48,7 +48,7 @@ func UploadImagesHandler(c *gin.Context) {
 	}
 
 	// Get category ID from the common package
-	categoryID, err := common.GetCategoryId(productType)
+	categoryID, err := common.GetPropertyTypeId(productType)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

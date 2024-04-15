@@ -5,7 +5,7 @@ import (
 
 
 	"github.com/mmanjoura/niya-estates/backend/pkg/api/storage"
-
+	"github.com/mmanjoura/niya-estates/backend/pkg/api/properties"
 	"github.com/mmanjoura/niya-estates/backend/pkg/api/users"
 
 	"github.com/mmanjoura/niya-estates/backend/pkg/auth"
@@ -28,10 +28,13 @@ func InitRouter() *gin.Engine {
 		v1.POST("/uploadImage", storage.UploadImagesHandler)
 		
 		// Auth routes
-		v1.POST("/auth/login", auth.LoginHandler)
+		v1.POST("/auth/login",  auth.LoginHandler)
 		v1.POST("/auth/register", auth.RegisterHandler)
 		v1.POST("/auth/logout", auth.Logout)
-		v1.GET("/auth/account", middleware.JWTAuth(), users.Account)
+		v1.GET("/auth/account", users.Account)
+
+		// Properties routes
+		v1.GET("/properties", properties.GetAll)
 
 	}
 
