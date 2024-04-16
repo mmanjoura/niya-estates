@@ -10,6 +10,7 @@ export default function SignUp() {
   const [full_name, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone_number, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isPasswordMatch, setIsPasswordMatch] = useState(true);
@@ -41,7 +42,8 @@ export default function SignUp() {
       body: JSON.stringify({
         full_name,
         email,
-        password
+        password,
+        phone_number,
       }),
     });
     const data = await res.json();
@@ -143,6 +145,10 @@ export default function SignUp() {
                       <div className="form-group mb-4">
                         <label className="required">Enter Email</label>
                         <input type="email" className="form-control" required onChange={ e => setEmail(e.target.value)}/>
+                      </div>
+                      <div className="form-group mb-4">
+                        <label className="required">Phone Number</label>
+                        <input type="text" className="form-control" required onChange={ e => setPhoneNumber(e.target.value)}/>
                       </div>
                       {/* /.End Form Group */}
                       {/* Start Form Group */}

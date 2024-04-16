@@ -2,8 +2,8 @@
 "use client"
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import ProtectAdminRoute from "./utils/ProtectAdminRoute";
+import { use, useEffect, useState } from "react";
+
 const links = [
     { href: '/properties-list?property-type=buy', text: 'Buy' },
     { href: '/properties-list?property-type=rent', text: 'Rent' },
@@ -43,9 +43,12 @@ const links = [
   
 export default function Header() {
     const [hasLogo, setHasLogo] = useState(false);
+    const [userType, setUserType] = useState(null);
+    const [fullName, setFullName] = useState(null);
+    
     const path=usePathname()
-    const user = ProtectAdminRoute();
-    console.log("User Type", user)
+    
+    console.log("User Type", userType)
 
     function handleLogoutClick() {
     //   remove user info from local storage
@@ -54,6 +57,8 @@ export default function Header() {
       }
 
     useEffect(() => {
+        setUserType(window.localStorage.getItem('user_type'));
+        setFullName(window.localStorage.getItem('full_name'));
         const handleScroll = () => {
             const scroll = window.scrollY;
             if (scroll >= 81) {
@@ -157,25 +162,29 @@ export default function Header() {
                             
                                 <li className="nav-item"><Link className="nav-link" href="contact">Contact</Link></li>
                                 {/* Show admin link if the user is user */}
-                                {user && <li className="nav-item"><Link className="nav-link" href="post-property">Post Property</Link></li>}
-                        
+                                {userType &&   <li className="nav-item"><Link className="nav-link" href="post-property">Post Property</Link></li>}                             
                             
                             </ul>
+                        
                         </div>
                         {/*  /. End Navbar Collapse */}
                         <div className="d-flex gap-1 ms-lg-5">
                 
                             {/* Start Cart Button */}
-                            <Link href="/" data-bs-toggle="modal" data-bs-target="#cartEmpty" className="align-items-center btn cart-button d-none d-xl-flex ms-2 ms-lg-0">
+                         
+                            {userType &&   <Link href="/" data-bs-toggle="modal" data-bs-target="#cartEmpty" className="align-items-center btn cart-button d-none d-xl-flex ms-2 ms-lg-0">
                                 <i className="fa-solid fa-house"></i>
-                                <span className="ms-2">My Account</span>
+                                <span className="ms-2">{fullName}</span>
                                 <span className="align-items-center cart-quantity d-flex fw-bold justify-content-center ms-2 rounded-circle">0</span>
                             </Link>
+                            }                        
+                      
+                         
                             {/* For Mobile */}
                             <Link href="/" className="btn btn-primary d-none d-sm-inline-block d-xl-none"><i className="fa-solid fa-house"></i></Link>
                             {/*  /. End Cart Button */}
                             {/* Start Login & Signup Button */}
-                            {user ?
+                            {userType ?
                             <Link href="signin" className="btn btn-primary btn-login hstack gap-2" onClick={handleLogoutClick}>
                                 <i className="fa-solid fa-arrow-right-to-bracket"></i>
                                 <div className="vr d-none d-sm-inline-block"></div>
@@ -188,8 +197,9 @@ export default function Header() {
                                 <span className="d-none d-sm-inline-block">Login / Signup</span>
                             </Link>
                             }
-                            {/* /. End Login & Signup Button */}
-                            {/*  Start Navbar Toggler Buton */}
+
+                        
+    
                             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                 <span className="navbar-toggler-icon"></span>
                             </button>

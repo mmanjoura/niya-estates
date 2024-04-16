@@ -33,7 +33,7 @@ export default function SignIn() {
         full_name,
         email,
         password,
-        user_type
+
       }),
     });
     
@@ -42,9 +42,12 @@ export default function SignIn() {
       setError(data.error);
       window.location.href = "/signin";
     }
-
+    console.log("user data:", data);
     window.localStorage.setItem('user_type', data?.user?.user_type);
     window.localStorage.setItem('full_name', data?.user?.full_name);   
+    window.localStorage.setItem('user_email', data?.user?.email);   
+    window.localStorage.setItem('user_phone', data?.user?.phone_number);  
+    window.localStorage.setItem('user_id', data?.user?.id);  
     window.location.href = "/post-property";
   }
   return (

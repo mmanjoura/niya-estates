@@ -2,10 +2,8 @@ package properties
 
 import (
 	"net/http"
-	"strings"
 	"time"
 
-	"github.com/mmanjoura/niya-estates/backend/pkg/common"
 	"github.com/mmanjoura/niya-estates/backend/pkg/database"
 	"github.com/mmanjoura/niya-estates/backend/pkg/models"
 
@@ -21,26 +19,13 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	property_type := strings.ToUpper(c.Query("PropertyType"))
-
-	if property_type == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Property Type required"})
-		return
-
-	}
-
-	_, err := common.GetPropertyTypeId(property_type)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
 	db := database.Database.DB
 
 	result, err := db.ExecContext(c, `
 			INSERT INTO properties (
 				agent_id,
 				property_type,
+				listing_type,
 				img,
 				status,
 				name,
@@ -48,14 +33,17 @@ func Create(c *gin.Context) {
 				description,
 				bedroom,
 				bathroom,
-				area,
-				money,
+				living_area,
+				land_area,
+				construction_area,
+				price,
 				created_at,
 				updated_at
 			)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,	
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,	
 		newProperty.AgentID,	
 		newProperty.PropertyType,
+		newProperty.ListingType,
 		newProperty.Img,
 		newProperty.Status,
 		newProperty.Name,
@@ -63,7 +51,9 @@ func Create(c *gin.Context) {
 		newProperty.Description,
 		newProperty.Bedroom,
 		newProperty.Bathroom,
-		newProperty.Area,
+		newProperty.LivingArea,
+		newProperty.LandArea,
+		newProperty.ConstructionArea,
 		newProperty.Price,		
 		time.Now(),
 		time.Now())

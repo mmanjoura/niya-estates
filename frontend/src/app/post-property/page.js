@@ -1,10 +1,111 @@
+'use client';
 import Layout from "@/components/Layout";
 import Link from "next/link";
+import ProtectAdminRoute from "@/components/utils/ProtectAdminRoute";
+import LoadingSpinner from '@/components/spinners/LoadingSpinner';
+import { useEffect, useState } from "react";
 
 export default function PostProperty() {
+
+
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+  const [agent_id, setAgentId] = useState("");
+  const [property_type, setPropertyType] = useState("");
+  const [listing_type, setListingType] = useState("");
+  const [img, setImg] = useState("");
+  const [status, setStatus] = useState("");
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
+  const [bedroom, setBedroom] = useState("");
+  const [bathroom, setBathroom] = useState("");
+  const [parking_lots, setParkingLots] = useState("");
+  const [living_area, setLivingArea] = useState("");
+  const [land_area, setLandArea] = useState("");
+  const [construction_area, setConstructionArea] = useState("");
+  const [price, setPrice] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState("");
+
+  useEffect(() => {
+    setUser(ProtectAdminRoute());
+    setAgentId(user?.user_id);
+  }, []);
+
+  const [amenities, setAmenities] = useState({
+    garden: false,
+    internet: false,
+    pool: false,
+    jacuzzi: false,
+    video_surveillance: false,
+    cinema: false,
+    laundry_room: false
+  });
+
+  const handlePropetyTypeChange = (e) => {
+    setPropertyType(e.target.value);
+    setAgentId(user?.user_id);
+    setStatus("active");
+
+  };
+  const handleListingTypeChange = (e) => {
+    setListingType(e.target.value);
+
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { id, checked } = e.target;
+    setAmenities(prevState => ({
+      ...prevState,
+      [id]: checked
+    }));
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const res = await fetch(baseURL + '/properties', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        agent_id,
+        property_type,
+        listing_type,
+        img,
+        status,
+        name,
+        location,
+        description,
+        bedroom,
+        bathroom,
+        living_area,
+        parking_lots,
+        living_area,
+        land_area,
+        construction_area,
+        price,
+        amenities
+
+      }),
+    });
+    const body = await res.json();
+    setTimeout(() => {
+      document.getElementById("SubmitForm").reset();
+      setLoading(false);
+      setShowHide(false)
+    }
+      , 1000);
+
+  };
+
   return (
+
     <Layout>
       {/* Start Main Content */}
+      {loading && <LoadingSpinner />}
       <div className="main-content">
         <div className="border-bottom py-3">
           <div className="container">
@@ -16,7 +117,7 @@ export default function PostProperty() {
               <div className="border-start col-auto">
                 <ol className="align-items-center breadcrumb fw-medium mb-0">
                   <li className="breadcrumb-item d-flex align-items-center">
-                    <Link href="/" className="text-decoration-none"> 
+                    <Link href="/" className="text-decoration-none">
                       <i className="fa-solid fa-house-chimney-crack fs-18" />
                     </Link>
                   </li>
@@ -39,7 +140,7 @@ export default function PostProperty() {
                 {/* Start Section Header Title */}
                 <div className="section-header text-center mb-5">
                   {/* Start Section Header title */}
-               <h2 className="h1 fw-semibold mb-3 section-header__title text-capitalize">Post a property for <span className="underline position-relative text-primary">sale</span> or rent</h2>
+                  <h2 className="h1 fw-semibold mb-3 section-header__title text-capitalize">Post a property for <span className="underline position-relative text-primary">sale</span> or rent</h2>
                   {/* /.End Section Header Title */}
                   {/* Start Section Header Sub Title */}
                   <div className="sub-title fs-16">
@@ -54,7 +155,7 @@ export default function PostProperty() {
               </div>
             </div>
             <div className="row justify-content-center g-4">
-              <form className="col-lg-8">
+              <form className="col-lg-8" id="SubmitForm" onSubmit={handleSubmit}>
                 <div className="shadow p-4 p-sm-5 rounded-4 mb-4">
                   <div className="align-items-sm-center border-bottom d-sm-flex mb-5 pb-4">
                     <div className="d-flex flex-shrink-0 gap-1">
@@ -66,7 +167,7 @@ export default function PostProperty() {
                       </div>
                     </div>
                     <div className="flex-grow-1 ms-3">
-                      <h5 className="fw-semibold">Information about you</h5>
+                      <h5 className="fw-semibold">{user?.full_name}</h5>
                       <p className="mb-0">
                         There are many variations of passages of Lorem Ipsum
                         <br className="d-none d-lg-block" /> available, but the
@@ -78,12 +179,12 @@ export default function PostProperty() {
                     <div className="col-md-6">
                       {/* Start Form Group */}
                       <div className="form-group">
-                        <label className="required">Full name</label>
+
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Naeem Khan"
-                          required=""
+                          disabled
+                          value={user?.full_name}
                         />
                       </div>
                       {/* /.End Form Group */}
@@ -91,12 +192,12 @@ export default function PostProperty() {
                     <div className="col-md-6">
                       {/* Start Form Group */}
                       <div className="form-group">
-                        <label className="required">Email Address</label>
+
                         <input
                           type="email"
                           className="form-control"
-                          placeholder="example@email.com"
-                          required=""
+                          value={user?.email}
+                          disabled
                         />
                       </div>
                       {/* /.End Form Group */}
@@ -104,12 +205,11 @@ export default function PostProperty() {
                     <div className="col-md-6">
                       {/* Start Form Group */}
                       <div className="form-group">
-                        <label className="required">Phone</label>
                         <input
                           type="number"
                           className="form-control"
-                          placeholder="(123) 456 - 789"
-                          required=""
+                          value={user?.phone_number}
+                          disabled
                         />
                       </div>
                       {/* /.End Form Group */}
@@ -146,7 +246,8 @@ export default function PostProperty() {
                           type="text"
                           className="form-control"
                           placeholder="Property listing title"
-                          required=""
+                          required
+                          onChange={e => setName(e.target.value)}
                         />
                       </div>
                       {/* /.End Form Group */}
@@ -155,7 +256,11 @@ export default function PostProperty() {
                       {/* Start Form Group */}
                       <div className="form-group">
                         <label className="required">Address</label>
-                        <input type="email" className="form-control" required="" />
+                        <input
+                          className="form-control"
+                          required
+                          onChange={e => setLocation(e.target.value)}
+                        />
                       </div>
                       {/* /.End Form Group */}
                     </div>
@@ -163,7 +268,11 @@ export default function PostProperty() {
                       {/* Start Form Group */}
                       <div className="form-group">
                         <label className="required">City</label>
-                        <input type="number" className="form-control" required="" />
+                        <input
+                          className="form-control"
+                          required
+
+                        />
                       </div>
                       {/* /.End Form Group */}
                     </div>
@@ -174,12 +283,15 @@ export default function PostProperty() {
                         <select
                           className="form-select"
                           aria-label="Default select example"
-                          defaultValue="" 
+                          value={property_type}
+                          onChange={handlePropetyTypeChange}
+
                         >
                           <option value="">Select</option>
                           <option value={1}>Apartment</option>
                           <option value={2}>House</option>
-                          <option value={3}>Office</option>
+                          <option value={3}>Commercial</option>
+                          <option value={4}>Land</option>
                         </select>
                       </div>
                       {/* /.End Form Group */}
@@ -191,8 +303,8 @@ export default function PostProperty() {
                         <select
                           className="form-select"
                           aria-label="Default select example"
-                          defaultValue="" 
-                        >
+                          value={listing_type}
+                          onChange={handleListingTypeChange}                          >
                           <option value="">Select</option>
                           <option value={1}>For Rent</option>
                           <option value={2}>For Sale</option>
@@ -208,7 +320,8 @@ export default function PostProperty() {
                           type="number"
                           className="form-control"
                           placeholder="ex. $10,000"
-                          required=""
+                          required
+                          onChange={e => setPrice(e.target.value)}
                         />
                       </div>
                       {/* /.End Form Group */}
@@ -222,6 +335,7 @@ export default function PostProperty() {
                           className="form-control"
                           placeholder="e.g. 1200 sqft"
                           required=""
+                          onChange={e => setLivingArea(e.target.value)}
                         />
                       </div>
                       {/* /.End Form Group */}
@@ -230,7 +344,12 @@ export default function PostProperty() {
                       {/* Start Form Group */}
                       <div className="form-group">
                         <label className="required">Bedrooms</label>
-                        <input type="number" className="form-control" required="" />
+                        <input
+                          type="number"
+                          className="form-control"
+                          required
+                          onChange={e => setBedroom(e.target.value)}
+                        />
                       </div>
                       {/* /.End Form Group */}
                     </div>
@@ -238,7 +357,12 @@ export default function PostProperty() {
                       {/* Start Form Group */}
                       <div className="form-group">
                         <label className="required">Bathrooms</label>
-                        <input type="number" className="form-control" required="" />
+                        <input
+                          type="number"
+                          className="form-control"
+                          required
+                          onChange={e => setBathroom(e.target.value)}
+                        />
                       </div>
                       {/* /.End Form Group */}
                     </div>
@@ -246,7 +370,12 @@ export default function PostProperty() {
                       {/* Start Form Group */}
                       <div className="form-group">
                         <label className="required">Parking lots</label>
-                        <input type="number" className="form-control" required="" />
+                        <input
+                          type="number"
+                          className="form-control"
+                          required
+                          onChange={e => setParkingLots(e.target.value)}
+                        />
                       </div>
                       {/* /.End Form Group */}
                     </div>
@@ -258,7 +387,9 @@ export default function PostProperty() {
                           type="number"
                           className="form-control"
                           placeholder="ex. 4795 sqft"
-                          required=""
+                          required
+                          onChange={e => setConstructionArea(e.target.value)}
+
                         />
                       </div>
                       {/* /.End Form Group */}
@@ -271,7 +402,8 @@ export default function PostProperty() {
                           type="number"
                           className="form-control"
                           placeholder="ex. 4795 sqft"
-                          required=""
+                          required
+                          onChange={e => setLandArea(e.target.value)}
                         />
                       </div>
                       {/* /.End Form Group */}
@@ -280,197 +412,39 @@ export default function PostProperty() {
                       {/* Start Form Group */}
                       <div className="form-group">
                         <label className="required">
-                          Listing short description
+                          Listing Description
                         </label>
                         <textarea
                           className="form-control"
                           placeholder="Please enter up to 240 characters."
                           rows={4}
-                          defaultValue={""}
+                          onChange={e => setDescription(e.target.value)}
                         />
                       </div>
                       {/* /.End Form Group */}
                     </div>
-                    <div className="col-md-12">
-                      {/* Start Form Group */}
-                      <div className="form-group">
-                        <label className="required">Listing long description</label>
-                        <textarea
-                          className="form-control"
-                          placeholder="Please enter up to 4000 characters."
-                          rows={4}
-                          defaultValue={""}
-                        />
-                      </div>
-                      {/* /.End Form Group */}
-                    </div>
+
                     <div className="col-md-12">
                       <div className="fw-medium text-dark mb-3">
                         Property amenities
                       </div>
                       <div className="row gx-3 gy-2">
-                        <div className="col-sm-6 col-md-4">
-                          {/* Start Form Check */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              defaultValue=""
-                              id="flexCheckDefaultOne"
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="flexCheckDefaultOne"
-                            >
-                              Garden
-                            </label>
+                        {Object.entries(amenities).map(([key, value]) => (
+                          <div className="col-sm-6 col-md-4" key={key}>
+                            <div className="form-check">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id={key}
+                                checked={value}
+                                onChange={handleCheckboxChange}
+                              />
+                              <label className="form-check-label" htmlFor={key}>
+                                {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
+                              </label>
+                            </div>
                           </div>
-                          {/* /. End Form Check */}
-                        </div>
-                        <div className="col-sm-6 col-md-4">
-                          {/* Start Form Check */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              defaultValue=""
-                              id="flexCheckDefaultTwo"
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="flexCheckDefaultTwo"
-                            >
-                              Security cameras
-                            </label>
-                          </div>
-                          {/* /. End Form Check */}
-                        </div>
-                        <div className="col-sm-6 col-md-4">
-                          {/* Start Form Check */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              defaultValue=""
-                              id="flexCheckDefaultThree"
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="flexCheckDefaultThree"
-                            >
-                              Laundry
-                            </label>
-                          </div>
-                          {/* /. End Form Check */}
-                        </div>
-                        <div className="col-sm-6 col-md-4">
-                          {/* Start Form Check */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              defaultValue=""
-                              id="flexCheckDefaultFour"
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="flexCheckDefaultFour"
-                            >
-                              Internet
-                            </label>
-                          </div>
-                          {/* /. End Form Check */}
-                        </div>
-                        <div className="col-sm-6 col-md-4">
-                          {/* Start Form Check */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              defaultValue=""
-                              id="flexCheckDefaultFive"
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="flexCheckDefaultFive"
-                            >
-                              Pool
-                            </label>
-                          </div>
-                          {/* /. End Form Check */}
-                        </div>
-                        <div className="col-sm-6 col-md-4">
-                          {/* Start Form Check */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              defaultValue=""
-                              id="flexCheckDefaultSix"
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="flexCheckDefaultSix"
-                            >
-                              Video surveillance
-                            </label>
-                          </div>
-                          {/* /. End Form Check */}
-                        </div>
-                        <div className="col-sm-6 col-md-4">
-                          {/* Start Form Check */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              defaultValue=""
-                              id="flexCheckDefaultSeven"
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="flexCheckDefaultSeven"
-                            >
-                              Laundry room
-                            </label>
-                          </div>
-                          {/* /. End Form Check */}
-                        </div>
-                        <div className="col-sm-6 col-md-4">
-                          {/* Start Form Check */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              defaultValue=""
-                              id="flexCheckDefaultEight"
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="flexCheckDefaultEight"
-                            >
-                              Jacuzzi
-                            </label>
-                          </div>
-                          {/* /. End Form Check */}
-                        </div>
-                        <div className="col-sm-6 col-md-4">
-                          {/* Start Form Check */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              defaultValue=""
-                              id="flexCheckDefaultNine"
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="flexCheckDefaultNine"
-                            >
-                              Security cameras
-                            </label>
-                          </div>
-                          {/* /. End Form Check */}
-                        </div>
+                        ))}
                       </div>
                     </div>
                     <div className="col-md-12">
@@ -509,7 +483,8 @@ export default function PostProperty() {
           </div>
         </div>
       </div>
-      {/* /. End Main Content */}
+
+
     </Layout>
 
   );

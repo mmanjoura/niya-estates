@@ -65,7 +65,8 @@ export default  function FeaturesProperties() {
                           <div className="card-image-hover overflow-hidden position-relative h-100">
                             {/* Start Image */}
                             <img
-                              src={featuresProperty?.img}
+                              // src={featuresProperty?.img}
+                              src="assets/img/house.png"
                               alt=""
                               className="h-100 w-100 object-fit-cover"
                             />

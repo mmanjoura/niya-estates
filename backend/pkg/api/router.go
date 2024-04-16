@@ -35,6 +35,7 @@ func InitRouter() *gin.Engine {
 
 		// Properties routes
 		v1.GET("/properties", properties.GetAll)
+		v1.POST("/properties", properties.Create)
 
 	}
 

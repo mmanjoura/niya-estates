@@ -12,6 +12,7 @@ type SignUp struct {
 	FullName string `json:"full_name" binding:"required"`
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
+	PhoneNumber string `json:"phone_number"`
 }
 
 type User struct {
@@ -19,6 +20,7 @@ type User struct {
 	FullName  string    `json:"full_name" binding:"required"`
 	Email     string    `json:"email" binding:"required"`
 	Password  string    `json:"password" binding:"required"`
+	PhoneNumber string `json:"phone_number"`
 	UserType  string       `json:"user_type"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

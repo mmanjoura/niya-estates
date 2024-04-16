@@ -40,8 +40,8 @@ func LoginHandler(c *gin.Context) {
 	}
 
 	// Fetch the user from the database
-	err := db.QueryRow("SELECT id, full_name, email, password, user_type, Created_At, Updated_At FROM users WHERE email = ?", incomingUser.Email).
-		Scan(&dbUser.ID, &dbUser.FullName, &dbUser.Email, &dbUser.Password, &dbUser.UserType, &dbUser.CreatedAt, &dbUser.UpdatedAt)
+	err := db.QueryRow("SELECT id, full_name, email, password, phone_number, user_type, Created_At, Updated_At FROM users WHERE email = ?", incomingUser.Email).
+		Scan(&dbUser.ID, &dbUser.FullName, &dbUser.Email, &dbUser.Password, &dbUser.PhoneNumber, &dbUser.UserType, &dbUser.CreatedAt, &dbUser.UpdatedAt)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -108,14 +108,15 @@ func RegisterHandler(c *gin.Context) {
 		FullName:  user.FullName,
 		Email:     user.Email,
 		Password:  hashedPassword,
+		PhoneNumber: user.PhoneNumber,
 		UserType:  "user",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
 
 	// Execute the SQL query to insert a new user
-	_, err = db.Exec("INSERT INTO users (full_name, email, password, user_type, Created_At, Updated_At) VALUES (?, ?, ?, ?, ?, ?)",
-		newUser.FullName, newUser.Email, newUser.Password, newUser.UserType, newUser.CreatedAt, newUser.UpdatedAt)
+	_, err = db.Exec("INSERT INTO users (full_name, email, password, phone_number, user_type, Created_At, Updated_At) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		newUser.FullName, newUser.Email, newUser.Password, newUser.PhoneNumber, newUser.UserType, newUser.CreatedAt, newUser.UpdatedAt)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not save user"})
