@@ -39,7 +39,7 @@ func InitRouter() *gin.Engine {
 		v1.POST("/properties", properties.Create)
 
 		// Download database
-		v1.GET("/dumpdb", func(c *gin.Context) {
+		v1.GET("/backup", func(c *gin.Context) {
 			database.BackUp(c)
 		})
 

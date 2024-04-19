@@ -8,6 +8,7 @@ import (
 	"github.com/mmanjoura/niya-estates/backend/pkg/models"
 
 	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
 
@@ -19,42 +20,46 @@ func Create(c *gin.Context) {
 		return
 	}
 
+	propertyAmenities := newProperty.Amenities
+	fmt.Println(propertyAmenities)
+
 	db := database.Database.DB
 
 	result, err := db.ExecContext(c, `
 			INSERT INTO properties (
 				agent_id,
+				title,
+				address,
+				city,				
 				property_type,
 				listing_type,
-				img,
-				status,
-				name,
-				location,
-				description,
+				price,
+				living_area,
 				bedroom,
 				bathroom,
-				living_area,
-				land_area,
+				parking_lots,
 				construction_area,
-				price,
+				land_area,				
+				description,
 				created_at,
 				updated_at
 			)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,	
 		newProperty.AgentID,	
+		newProperty.Title,
+		newProperty.Address,
+		newProperty.City,
 		newProperty.PropertyType,
 		newProperty.ListingType,
-		newProperty.Img,
-		newProperty.Status,
-		newProperty.Name,
-		newProperty.Location,
-		newProperty.Description,
+		newProperty.Price,
+		newProperty.LivingArea,
 		newProperty.Bedroom,
 		newProperty.Bathroom,
-		newProperty.LivingArea,
-		newProperty.LandArea,
+		newProperty.ParkingLots,
 		newProperty.ConstructionArea,
-		newProperty.Price,		
+		newProperty.LandArea,
+		newProperty.Description,
+			
 		time.Now(),
 		time.Now())
 
@@ -63,8 +68,67 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	id, _ := result.LastInsertId()
+	id, err := result.LastInsertId()
 	newProperty.ID = int(id)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	amenity, err := db.ExecContext(c, `
+			INSERT INTO amenities ( property_id,
+									garden,
+									pool,
+									jacuzzi,
+									video_surveillance,
+									alarm_system,
+									elevator,
+									playground,
+									tennis_court,
+									golf_course,
+									doorman,
+									internet,
+									television,
+									gym,
+									furnished,
+									heater,
+									air_conditioning
+			)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,	
+		id,
+		propertyAmenities.Garden,
+		propertyAmenities.Pool,
+		propertyAmenities.Jacuzzi,
+		propertyAmenities.VideoSurveillance,
+		propertyAmenities.AlarmSystem,
+		propertyAmenities.Elevator,
+		propertyAmenities.Playground,
+		propertyAmenities.TennisCourt,
+		propertyAmenities.GolfCourse,
+		propertyAmenities.Doorman,
+		propertyAmenities.Internet,
+		propertyAmenities.Television,
+		propertyAmenities.Gym,
+		propertyAmenities.Furnished,
+		propertyAmenities.Heater,
+		propertyAmenities.AirConditioning,
+	)
+
+		if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+		}
+
+		id, _ = amenity.LastInsertId()
+		newProperty.Amenities.Id = int(id)
+		
+
+
+		if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+		}
 
 	c.JSON(http.StatusOK, gin.H{"data": newProperty})
 }
