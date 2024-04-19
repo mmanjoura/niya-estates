@@ -16,6 +16,7 @@ import (
 
 func GetAll(c *gin.Context) {
 	db := database.Database.DB
+
 	limit, offset := common.GetPaginationParams(c)
 	images, err := RetrieveImages(c, db, limit, offset, 0, 0)
 

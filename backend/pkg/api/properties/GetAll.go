@@ -47,7 +47,7 @@ func RetrieveProperties(c *gin.Context, db *sql.DB, limit, offset int) ([]models
 	created_at,
 	updated_at,
 	COUNT(*) OVER()
-	FROM Properties   ORDER BY id ASC `+
+	FROM Properties   ORDER BY id DESC `+
 		database.FormatLimitOffset(limit, offset))
 
 	if err != nil {

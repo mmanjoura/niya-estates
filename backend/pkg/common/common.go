@@ -33,7 +33,7 @@ func GetPaginationParams(c *gin.Context) (offset int, limit int) {
 	limit, _ = strconv.Atoi(c.Query("limit"))
 
 	offset = 0
-	limit = 10
+	limit = 1000
 
 	return offset, limit
 }

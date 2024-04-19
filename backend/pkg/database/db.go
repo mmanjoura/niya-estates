@@ -40,6 +40,7 @@ func ConnectDatabase() {
 		DB:     db,
 		Config: configuraions,
 	}
+	
 }
 func checkErr(err error) {
 	if err != nil {

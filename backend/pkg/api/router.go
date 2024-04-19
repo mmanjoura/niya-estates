@@ -7,6 +7,7 @@ import (
 	"github.com/mmanjoura/niya-estates/backend/pkg/api/storage"
 	"github.com/mmanjoura/niya-estates/backend/pkg/api/properties"
 	"github.com/mmanjoura/niya-estates/backend/pkg/api/users"
+	"github.com/mmanjoura/niya-estates/backend/pkg/api/database"
 
 	"github.com/mmanjoura/niya-estates/backend/pkg/auth"
 	"github.com/mmanjoura/niya-estates/backend/pkg/middleware"
@@ -36,6 +37,12 @@ func InitRouter() *gin.Engine {
 		// Properties routes
 		v1.GET("/properties", properties.GetAll)
 		v1.POST("/properties", properties.Create)
+
+		// Download database
+		v1.GET("/dumpdb", func(c *gin.Context) {
+			database.BackUp(c)
+		})
+
 
 	}
 
