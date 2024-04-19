@@ -16,6 +16,14 @@ const links = [
     { href: '/post-property', text: 'Sell your House' },
     { href: '/#', text: 'Notary & Law' },
 
+    { href: '/post-property', text: 'List Property' },
+    { href: '/post-agent', text: 'Register as Agent' },
+    { href: '/post-image', text: 'Add Property Images' },
+    { href: '/backup', text: 'Backup Database' },
+  
+   
+    { href: '/properties-list?property-type=commercial', text: 'Commercial' },
+
 
     { href: '/properties-list', text: 'Properties List' },
     { href: '/properties-grid', text: 'Properties Grid' },
@@ -162,9 +170,28 @@ export default function Header() {
                             
                                 <li className="nav-item"><Link className="nav-link" href="contact">Contact</Link></li>
                                 {/* Show admin link if the user is user */}
-                                {userType &&   <li className="nav-item"><Link className="nav-link" href="post-property">Post Property</Link></li>}                             
+                                {userType &&   
+                                      <li className="nav-item dropdown">
+                                      <Link className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                      Dashboard
+                                      </Link>
+                                      <ul className="dropdown-menu">
+                                      {
+                                                      links?.slice(8,12).map((link)=>{
+                                                          return(
+                                                              <Link key={`${link.href}${link.text}`} href={link.href} className={`dropdown-item col-6 ${path === link.href ? '' : ''}`}>
+                                                                      {link.text}
+                                                              </Link>
+                                                        
+                                                              
+                                                          )
+                                                      })
+                                                    }
+                                      </ul>
+                                  </li>
+                                }                             
                             
-                            </ul>
+                                </ul>
                         
                         </div>
                         {/*  /. End Navbar Collapse */}

@@ -4,9 +4,13 @@ import Link from "next/link";
 import ProtectAdminRoute from "@/components/utils/ProtectAdminRoute";
 import LoadingSpinner from '@/components/spinners/LoadingSpinner';
 import { useState } from "react";
+import { usePropertiesData } from "../../data/properties_data";
+import PropertiesList from "@/components/utils/PropertiesList";
 
 export default function PostProperty() {
   const user = ProtectAdminRoute();
+  const properties = usePropertiesData();
+  console.log(properties);
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -14,6 +18,7 @@ export default function PostProperty() {
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
   const [files, setFiles] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('');
 
   const handleFileChange = (event) => {
     const fileList = event.target.files;
@@ -85,13 +90,17 @@ export default function PostProperty() {
 
   };
 
+  const handleSelect = (selectedOption) => {
+    setSelectedOption(selectedOption);
+  };
+
   return (
 
     <Layout>
       {/* Start Main Content */}
 
-      <div className="main-content">   
-      <div className="border-bottom py-3">
+      <div className="main-content">
+        <div className="border-bottom py-3">
           <div className="container">
             {/* Start Breadcrumbs */}
             <div className="row gy-2 gx-4 gx-md-5">
@@ -116,28 +125,16 @@ export default function PostProperty() {
             </div>
             {/* End Breadcrumbs */}
           </div>
-        </div> 
+        </div>
         <div className="py-5">
-          <div className="container py-4">           
-            <div className="row justify-content-center g-4">         
+          <div className="container py-4">
+            <div className="row justify-content-center g-4">
               <form className="col-lg-8" >
                 <div className="shadow p-4 p-sm-5 rounded-4">
                   <div className="align-items-sm-center border-bottom d-sm-flex mb-5 pb-4">
-                    {/* Dropdownlist of Properties */}
-
                     <div className="form-group">
-
-                      <select
-                        className="form-select"
-                        aria-label="Default select example"
-         
-                      >
-                        <option value="">Select Your Property</option>
-                        <option value={1}>Apartment</option>
-                        <option value={2}>House</option>
-                        <option value={3}>Commercial</option>
-                        <option value={4}>Land</option>
-                      </select>
+                      <PropertiesList  options={properties} onSelect={handleSelect} >
+                      </PropertiesList>
                     </div>
                   </div>
                   <div className="row gx-3 gy-4">
@@ -145,10 +142,10 @@ export default function PostProperty() {
                     <div className="col-md-12">
                       {/* Start Form Group */}
                       <div className="form-group">
-                      <p className="mb-0 mt-2">
-                        PNG, JPG or WEBP no bigger than w800 x h600 px.
-                        <br />     <br />
-                      </p>
+                        <p className="mb-0 mt-2">
+                          PNG, JPG or WEBP no bigger than w800 x h600 px.
+                          <br />     <br />
+                        </p>
 
                         <input
                           type="file"
@@ -159,8 +156,7 @@ export default function PostProperty() {
                         />
                         <br />     <br />
                       </div>
-                      {/* /.End Form Group */}
-                    
+
                     </div>
                     <div className="row row-cols-4">
                       {images.map((image, index) => (
