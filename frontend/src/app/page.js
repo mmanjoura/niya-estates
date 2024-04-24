@@ -4,12 +4,26 @@ import Carousel from "@/components/corousel";
 import FeaturesProperties from "@/components/feature-properties";
 import FooterWhite from "@/components/footer-white";
 import Dropdown from "@/components/form-control-two";
+import { BreadCrumbs } from "@/components/common/bread-crumb";
+
 import Link from "next/link";
+import Layout from "@/components/Layout";
 
 export default function HomeTwo() {
   return (
     <>
-    <Header/>
+   <Layout>
+      {/* Start Main Content */}
+
+      <div className="main-content">
+        <div className="border-bottom py-3">
+          <div className="container">
+            {/* Start Breadcrumbs */}
+            <BreadCrumbs  />
+            {/* End Breadcrumbs */}
+          </div>
+        </div>
+    
      {/* Start Hero Header Two */}
      <div
         className="align-items-center d-flex hero-header hero-header__two overflow-hidden position-relative"
@@ -17,9 +31,11 @@ export default function HomeTwo() {
           <img src="assets/img/png-img/section-bg.png" alt="" className="h-100 object-fit-cover position-absolute w-100 top-0"/>
         {/* Start Oblique */}
         <div className="d-md-block d-none h-100 oblique overflow-hidden position-absolute top-0">
+      
         <img src="assets/img/header/new/02.jpg" alt="" className="h-100 object-fit-cover position-absolute w-100 oblique-image top-0"/>
           
         </div>
+      
         {/* /.End Oblique */}
         <div className="container position-relative">
           <div className="row">
@@ -259,7 +275,9 @@ export default function HomeTwo() {
         </div>
       </div>
       {/* /.End Newslatter */}
-      <FooterWhite/>
+      </div>
+      </ Layout>
+   
     </>
   );
 }

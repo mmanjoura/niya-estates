@@ -12,29 +12,13 @@ import PropertyInfo from "@/components/properties/propertyInfo";
 
 export default function PostProperty() {
 
-
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
-
   const [property_type, setPropertyType] = useState("");
   const [listing_type, setListingType] = useState("");
-  const [img, setImg] = useState("");
-  const [status, setStatus] = useState("");
-  const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
-  const [description, setDescription] = useState("");
-  const [bedroom, setBedroom] = useState("");
-  const [bathroom, setBathroom] = useState("");
-  const [parking_lots, setParkingLots] = useState("");
-  const [living_area, setLivingArea] = useState("");
-  const [land_area, setLandArea] = useState("");
-  const [construction_area, setConstructionArea] = useState("");
-  const [price, setPrice] = useState("");
-  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState({});
-
+  const [currentPage, setCurrentPage] = useState(0);
   const [amenities, setAmenities] = useState({
 
-    Property_id: 0,  
     Garden : false,
     Pool : false,
     Jacuzzi : false,
@@ -68,6 +52,8 @@ export default function PostProperty() {
     construction_area: '',
     land_area: '',
     description: '',
+    youtube_video: '',
+    status: '',
     amenities: '',
   });
 
@@ -106,7 +92,6 @@ export default function PostProperty() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     formData.agent_id = user?.user_id;
     formData.property_type = property_type;
     formData.listing_type = listing_type;
@@ -132,6 +117,8 @@ export default function PostProperty() {
         construction_area: formData.construction_area,
         land_area: formData.land_area,
         description: formData.description,
+        youtube_video: formData.youtube_video,
+        status: formData.status,
         amenities: formData.amenities,
       }),
     });

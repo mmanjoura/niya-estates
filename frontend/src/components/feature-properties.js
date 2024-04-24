@@ -15,11 +15,17 @@ export default  function FeaturesProperties() {
       setProperties(response?.data);
     });
   }, []);
+  console.log("List of Properties", properties)
   if (!properties) {
     return null
   }
 
-  console.log(properties)
+//   const filterImagesByLocation = (images, location) => {
+//     return images.filter(img => img.location === location);
+// };
+
+
+
 
   return (
     <>
@@ -64,12 +70,13 @@ export default  function FeaturesProperties() {
                         <div className="bg-white col-lg-5 col-md-6 col-xl-3 position-relative">
                           <div className="card-image-hover overflow-hidden position-relative h-100">
                             {/* Start Image */}
-                            <img
-                              // src={featuresProperty?.img}
-                              src="assets/img/house.png"
-                              alt=""
-                              className="h-100 w-100 object-fit-cover"
-                            />
+                          <img
+                            src={featuresProperty?.images
+                              ?.filter(img => img.location === 'product_list')
+                              .map(img => img.image)[0]}
+                            alt=""
+                            className="h-100 w-100 object-fit-cover"
+                          />
                             {/* /. End Image */}
                             {/* Start Tag */}
                             <div className={`bg-${featuresProperty?.status === 'For Sale' ? 'primary' : 'white'} card-property-badge d-inline-block end-1 fs-13 fw-semibold position-absolute property-tags px-2 py-1 rounded-3 text-${featuresProperty?.status === 'For Sale' ? 'white' : 'primary'}  top-1`}>

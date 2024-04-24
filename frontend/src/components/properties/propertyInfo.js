@@ -18,6 +18,8 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
     construction_area: "",
     land_area: "",
     description: "",
+    youtube_video: "",
+    status: "",
     amenities: "",
 
   });
@@ -125,7 +127,7 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
           <input
             type="number"
             className="form-control"
-            placeholder="ex. $10,000"
+            placeholder="ex. €10,000"
             required
             name="price"
             onChange={handleChange}
@@ -141,7 +143,7 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
           <input
             type="number"
             className="form-control"
-            placeholder="e.g. 1200 sqft"
+            placeholder="e.g. 1200 &#x33A1;"
             required=""
             name="living_area"
             onChange={handleChange}
@@ -194,11 +196,11 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
       <div className="col-md-4">
         {/* Start Form Group */}
         <div className="form-group">
-          <label className="required">Construction sqft.</label>
+          <label className="required">Construction Area</label>
           <input
             type="number"
             className="form-control"
-            placeholder="ex. 4795 sqft"
+            placeholder="ex. 4795 sqm / &#x33A1;"
             required
             name="construction_area"
             onChange={handleChange}
@@ -210,11 +212,11 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
       <div className="col-md-4">
         {/* Start Form Group */}
         <div className="form-group">
-          <label className="required">Land sqft.</label>
+          <label className="required">Land area</label>
           <input
             type="number"
             className="form-control"
-            placeholder="ex. 4795 sqft"
+            placeholder="ex. 4795 sqm / &#x33A1;"
             required
             name="land_area"
             onChange={handleChange}
@@ -235,6 +237,23 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
             rows={4}
             required
             name="description"
+            onChange={handleChange}
+
+          />
+        </div>
+        {/* /.End Form Group */}
+      </div>
+      <div className="col-md-12">
+        {/* Start Form Group */}
+        <div className="form-group">
+          <label className="required">
+            Youtube Video URL
+          </label>
+          <input
+            type="text"
+            name="youtube_video"
+            className="form-control"
+            placeholder="ex. 4795 sqft"
             onChange={handleChange}
 
           />

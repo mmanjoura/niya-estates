@@ -2,7 +2,7 @@
 "use client"
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const links = [
     { href: '/properties-list?property-type=buy', text: 'Buy' },
@@ -264,6 +264,7 @@ export default function Header() {
                     </div>
                 </div>
             </div>
+            
             {/* /.End Cart Empty Modal */}
         </>
     );
