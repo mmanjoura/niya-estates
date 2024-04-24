@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/mmanjoura/niya-estates/backend/pkg/api/images"
 	"github.com/mmanjoura/niya-estates/backend/pkg/common"
 	"github.com/mmanjoura/niya-estates/backend/pkg/database"
 	"github.com/mmanjoura/niya-estates/backend/pkg/models"
@@ -14,6 +15,7 @@ import (
 
 func GetAll(c *gin.Context) {
 	db := database.Database.DB
+	
 	offset ,limit  := common.GetPaginationParams(c)
 	properties, err := RetrieveProperties(c, db, limit, offset)
 
@@ -40,13 +42,14 @@ func RetrieveProperties(c *gin.Context, db *sql.DB, limit, offset int) ([]models
 	living_area,
 	bedroom,
 	bathroom,
-	parking_lots
+	parking_lots,
 	construction_area,
 	land_area,				
 	description,
+	youtube_video,
+	status,
 	created_at,
-	updated_at,
-	COUNT(*) OVER()
+	updated_at
 	FROM Properties   ORDER BY id DESC `+
 		database.FormatLimitOffset(limit, offset))
 
@@ -56,6 +59,18 @@ func RetrieveProperties(c *gin.Context, db *sql.DB, limit, offset int) ([]models
 
 	for rows.Next() {
 		property, err := scanProperty(rows)
+
+		// we now need to ge the amenities
+		amenities, err := RetrieveAmenities(c, db, property.ID)
+		property.Amenities = amenities
+
+		// we now need to get the images
+		images, err := images.RetrieveImages(c, db, property.ID)
+		property.Images = images
+
+
+
+	
 
 		if err != nil {
 			return nil, err
@@ -73,7 +88,6 @@ func RetrieveProperties(c *gin.Context, db *sql.DB, limit, offset int) ([]models
 
 func scanProperty(rows *sql.Rows) (models.Property, error) {
 	property := models.Property{}
-	var n int
 
 	err := rows.Scan(&property.ID,
 		&property.AgentID,
@@ -90,10 +104,70 @@ func scanProperty(rows *sql.Rows) (models.Property, error) {
 		&property.ConstructionArea,
 		&property.LandArea,
 		&property.Description,
+		&property.YoutubeVideo ,
+		&property.Status,
 		(*time.Time)(&property.CreatedAt),
 		(*time.Time)(&property.UpdatedAt),
-		&n,
 	)
 
 	return property, err
 }
+
+func RetrieveAmenities(c *gin.Context, db *sql.DB, propertyId int) (models.Amenities, error) {
+	
+	amenities := models.Amenities{}
+
+	rows, err := db.QueryContext(c, `SELECT id,
+		property_id,
+		garden,
+		pool,
+		jacuzzi,
+		video_surveillance,
+		alarm_system,
+		elevator,
+		playground,
+		tennis_court,
+		golf_course,
+		doorman,
+		internet,
+		television,
+		gym,
+		furnished,
+		heater,
+		air_conditioning
+		FROM amenities WHERE property_id = $1`, propertyId)
+
+	if err != nil {
+		return amenities, err
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&amenities.Id,
+			&amenities.PropertyID,
+			&amenities.Garden,
+			&amenities.Pool,
+			&amenities.Jacuzzi,
+			&amenities.VideoSurveillance,
+			&amenities.AlarmSystem,
+			&amenities.Elevator,
+			&amenities.Playground,
+			&amenities.TennisCourt,
+			&amenities.GolfCourse,
+			&amenities.Doorman,
+			&amenities.Internet,
+			&amenities.Television,
+			&amenities.Gym,
+			&amenities.Furnished,
+			&amenities.Heater,
+			&amenities.AirConditioning,
+		)
+
+		if err != nil {
+			return amenities, err
+		}
+	}
+	defer rows.Close()
+
+	return amenities, nil
+}
+

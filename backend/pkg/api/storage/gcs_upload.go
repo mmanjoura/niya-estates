@@ -9,13 +9,13 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"cloud.google.com/go/storage"
+	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
 	"github.com/mmanjoura/niya-estates/backend/pkg/common"
 	"github.com/mmanjoura/niya-estates/backend/pkg/database"
-	"github.com/mmanjoura/niya-estates/backend/pkg/models"
+	models "github.com/mmanjoura/niya-estates/backend/pkg/models"
 )
 
 // Constants for configuration keys
@@ -26,20 +26,22 @@ const (
 
 // UploadImagesHandler handles image uploads.
 func UploadImagesHandler(c *gin.Context) {
-	// Extract necessary information from the request
+	// Retrieve configuration information from the database
+	config := database.Database.Config
+	bucketName := config[googleBucketNameKey]
+	projectID := config[googleProjectIDKey]
 	db := database.Database.DB
-	productType := strings.ToUpper(c.Query("category"))
-	referrer_id, err := strconv.Atoi(c.Query("id"))
 
-	slide_width, err := strconv.Atoi(c.Query("slide_width"))
-	slide_height, err := strconv.Atoi(c.Query("slide_height"))
-	gallery_width, err := strconv.Atoi(c.Query("gallery_width"))
-	gallery_height, err := strconv.Atoi(c.Query("gallery_height"))
-
-	if err != nil || referrer_id == 0 {
+	propertyID, err := strconv.Atoi(c.Query("propertyId"))
+	fullName := c.Query("fullName")
+	if err != nil || propertyID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or missing ID"})
 		return
 	}
+
+	// Replace spaces with underscores
+	fullName = strings.ReplaceAll(fullName, " ", "_")
+	propertyIDStr := strconv.Itoa(propertyID)
 
 	// Parse multipart form for file uploads
 	if err := c.Request.ParseMultipartForm(500000); err != nil {
@@ -47,22 +49,6 @@ func UploadImagesHandler(c *gin.Context) {
 		return
 	}
 
-	// Get category ID from the common package
-	categoryID, err := common.GetPropertyTypeId(productType)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// Retrieve configuration information from the database
-	config := database.Database.Config
-	bucketName := config[googleBucketNameKey]
-	folderName := productType + "/"
-	projectID := config[googleProjectIDKey]
-
-	// Variables to store uploaded images and context
-	var newGalleryImages []models.Image
-	var newSlideImages []models.Image
 	ctx := context.Background()
 
 	// Create a new Cloud Storage client
@@ -98,113 +84,109 @@ func UploadImagesHandler(c *gin.Context) {
 
 	// Process each uploaded file
 	for _, file := range files {
-		strID := strconv.Itoa(referrer_id)
-
-		// convert the multipart file into io.Reader
+		// Convert the multipart file into io.Reader
 		fileReader, err := common.FileHeaderToReader(file)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 
-		// decode the multipart file into an image
+		// Decode the multipart file into an image
 		img, _, err := image.Decode(fileReader)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		// Process the image to create a slide image and a gallery image
-
-		slideImage, err := common.ProcessImage(img, slide_width, slide_height)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		galleryImage, err := common.ProcessImage(img, gallery_width, gallery_height)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		// Get the sizes of the images to be created
+		imageSizes := getImageSizes(db)
+		if imageSizes == nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get image sizes"})
 			return
 		}
 
-		// create a map of img.Image and string
-		imgMap := make(map[string]image.Image)
-		imgMap["slideImage"] = slideImage
-		imgMap["galleryImage"] = galleryImage
+		// Iterate over the image sizes and create a new image for each size
+		for _, imageSize := range imageSizes {
 
-		for key, scaledImage := range imgMap {
-			filePath := folderName + key + "_" + strID + "_" + file.Filename
-			obj := bucket.Object(filePath)
-			imgReader, err := common.ImageToReader(scaledImage)
+			// We need imageSizeid, and PropertyId
+			
+
+			// Resize the image to the specified size
+			resizedImage, err := ImageResize(img, imageSize.Width, imageSize.Height)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			// Upload the galleryImag to Cloud Storage
+			filePath := fullName +"/" + imageSize.Location + "_" + propertyIDStr + "_" + file.Filename
+
+			// Create a new object in the bucket
+			obj := bucket.Object(filePath)
+			// w := obj.NewWriter(ctx)
+
+			imgReader, err := common.ImageToReader(resizedImage)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
 			if err := uploadFileToStorage(ctx, obj, imgReader); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			// Construct the file location URL
-			fileLocation := fmt.Sprintf("https://storage.googleapis.com/%s/%s", bucketName, filePath)
-			// Create a new GalleryImage model
+			img := fmt.Sprintf("https://storage.googleapis.com/%s/%s", bucketName, filePath)
 
-			if strings.ToUpper(key) == "GALLERYIMAGE" {
-				newGalleryImage := models.Image{
-
-					ImageSize: fileLocation,
-	
-					CreatedAt:  time.Now(),
-					UpdatedAt:  time.Now(),
-				}
-				// Append the new image to the slice
-				newGalleryImages = append(newGalleryImages, newGalleryImage)
-				err = insertImageIntoDatabase(c, db, "GALLERY", categoryID, referrer_id, newGalleryImage)
-				if err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-					return
-				}
-
+			// finally insert the image into the database
+			if err := insertImage(db, propertyID, imageSize.ID, img); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
 			}
-			if strings.ToUpper(key) == "SLIDEIMAGE" {
-				newSlideImage := models.Image{
-			
-					CreatedAt:  time.Now(),
-					UpdatedAt:  time.Now(),
-				}
-				// Append the new image to the slice
-				newSlideImages = append(newSlideImages, newSlideImage)
-				err = insertImageIntoDatabase(c, db, "SLIDE", categoryID, referrer_id, newSlideImage)
-				if err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-					return
-				}
-
-			}
-
 		}
 	}
-
 }
 
-// deleteOldReferences deletes old references of images from the database based on the image type.
-func deleteOldReferences(c *gin.Context, db *sql.DB, imageType string, referrer_id, categoryID int) {
-	var tableName, columnName string
+// Create a private member that returns a slice of ImageSizes
+func getImageSizes(db *sql.DB) []models.ImageSize {
 
-	switch imageType {
-	case "GALLERY":
-		tableName = "GalleryImages"
-		columnName = "referrer_id"
-	case "SLIDE":
-		tableName = "SlideImages"
-		columnName = "referrer_id"
+	// Query the database for all image sizes
+	rows, err := db.Query("SELECT * FROM imageSizes")
+	if err != nil {
+		fmt.Println("Error querying the database: ", err)
+		return nil
+	}
+	defer rows.Close()
+
+	imageSizes := []models.ImageSize{}
+	for rows.Next() {
+		var imageSize models.ImageSize
+		if err := rows.Scan(&imageSize.ID, &imageSize.Location, &imageSize.Width, &imageSize.Height); err != nil {
+			fmt.Println("Error scanning the database: ", err)
+			return nil
+		}
+		imageSizes = append(imageSizes, imageSize)
 	}
 
-	// Construct the SQL query to delete old references
-	query := fmt.Sprintf("DELETE FROM %s WHERE %s = ? AND category_id = ?", tableName, columnName)
-	if _, err := db.ExecContext(c, query, referrer_id, categoryID); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error while deleting %s: %s", imageType, err.Error())})
-		return
-	}
+	// Create a slice of ImageSizes
+	return imageSizes
 }
 
-// uploadFileToStorage uploads a file to Cloud Storage.
+func ImageResize(img image.Image, width, height int) (image.Image, error) {
+
+
+	// find the current size of the image
+	bounds := img.Bounds()
+	imgWidth := bounds.Dx()
+	imgHeight := bounds.Dy()
+
+	// If the image is already the correct size, return it
+	if imgWidth <= 800 || imgHeight <= 600 {
+		return nil, fmt.Errorf("Invalid size: %dx%d", imgWidth, imgHeight, "The size should be between 800 and 600")
+	}
+
+	croppedImage := imaging.CropAnchor(img, 800, 600, imaging.Center)
+	img = imaging.Resize(croppedImage, width, height, imaging.Lanczos)
+
+	return img, nil
+}
+
 func uploadFileToStorage(ctx context.Context, obj *storage.ObjectHandle, img io.Reader) error {
 	w := obj.NewWriter(ctx)
 
@@ -221,39 +203,12 @@ func uploadFileToStorage(ctx context.Context, obj *storage.ObjectHandle, img io.
 	return nil
 }
 
-// insertImageIntoDatabase inserts an image into the database based on the image type.
-func insertImageIntoDatabase(c *gin.Context, db *sql.DB, imageType string, categoryID, referrer_id int, images interface{}) error {
-	var tableName string
-
-	switch imageType {
-	case "GALLERY":
-		tableName = "GalleryImages"
-	case "SLIDE":
-		tableName = "SlideImages"
-	default:
-		tableName = "Images"
-	}
-
-	galleryImage, ok := images.(models.Image)
-
-	if ok {
-		// Construct the SQL query to insert the image into the database
-		query := fmt.Sprintf("INSERT INTO %s (category_id, referrer_id, img) VALUES (?, ?, ?)", tableName)
-		if _, err := db.Exec(query, galleryImage.PageName, referrer_id, galleryImage.Image); err != nil {
-			// c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return err
-		}
-	}
-	slideImage, ok := images.(models.Image)
-	if ok {
-		// Construct the SQL query to insert the image into the database
-		query := fmt.Sprintf("INSERT INTO %s (category_id, referrer_id, img) VALUES (?, ?, ?)", tableName)
-		if _, err := db.Exec(query, slideImage.PageName, referrer_id, slideImage.Image); err != nil {
-			// c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return err
-		}
-
-		return nil
+// Insert the new image into the database
+func insertImage(db *sql.DB, propertyID, imageSizeID int, image string) error {
+	_, err := db.Exec("INSERT INTO images (property_id, image_size_id, image) VALUES ($1, $2, $3)", propertyID, imageSizeID, image)
+	if err != nil {
+		return err
 	}
 	return nil
 }
+

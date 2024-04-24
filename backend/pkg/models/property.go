@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+
+	"time"
+)
 
 type Property struct {
 	ID               int       `json:"id"`
@@ -18,19 +21,22 @@ type Property struct {
 	ConstructionArea string    `json:"construction_area"`
 	LandArea         string    `json:"land_area"`
 	Description      string    `json:"description"`
+	YoutubeVideo     string    `json:"youtube_video"`
+	Status           string    `json:"status"`
 	Amenities        Amenities `json:"amenities"`
+	Images           []Image `json:"images"`
 	CreatedAt        time.Time `json:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at"`
 }
 
-type Amenities struct {	
-	Id				int  `json:"id"`
-	PropertyID       int  `json:"property_id"`
-	Garden            bool `json:"garden"`	
+type Amenities struct {
+	Id                int  `json:"id"`
+	PropertyID        int  `json:"property_id"`
+	Garden            bool `json:"garden"`
 	Pool              bool `json:"pool"`
 	Jacuzzi           bool `json:"jacuzzi"`
 	VideoSurveillance bool `json:"video_surveillance"`
-	AlarmSystem       bool `json:"alarm_system"`	
+	AlarmSystem       bool `json:"alarm_system"`
 	Elevator          bool `json:"elevator"`
 	Playground        bool `json:"playground"`
 	TennisCourt       bool `json:"tennis_court"`
@@ -42,11 +48,5 @@ type Amenities struct {
 	Furnished         bool `json:"furnished"`
 	Heater            bool `json:"heater"`
 	AirConditioning   bool `json:"air_conditioning"`
-
 }
 
-type PropertyImage struct {
-	ID         int    `json:"id"`
-	PropertyID int    `json:"property_id"`
-	Img        string `json:"img"`
-}

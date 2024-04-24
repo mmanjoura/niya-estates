@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/mmanjoura/niya-estates/backend/pkg/common"
-	"github.com/mmanjoura/niya-estates/backend/pkg/database"
 	"github.com/mmanjoura/niya-estates/backend/pkg/models"
 
 	"github.com/gin-gonic/gin"
@@ -15,35 +13,24 @@ import (
 // GetAll 			godoc
 
 func GetAll(c *gin.Context) {
-	db := database.Database.DB
 
-	limit, offset := common.GetPaginationParams(c)
-	images, err := RetrieveImages(c, db, limit, offset, 0, 0)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error while retreiving images": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": images})
+	c.JSON(http.StatusOK, gin.H{"data": nil})
 }
 
-func RetrieveImages(c *gin.Context, db *sql.DB, limit, offset, referrerId, categoryId int) ([]models.Image, error) {
-
-	condition := common.BuildCondition(referrerId, categoryId)
+func RetrieveImages(c *gin.Context, db *sql.DB, propertyId int) ([]models.Image, error) {
 
 	Images := []models.Image{}
 
 	rows, err := db.QueryContext(c, `SELECT ID,
-			page_name,
-			image_size,
+			property_id,
+			image_size_id,
 			image,
 			Created_At,
 			Updated_At,
 			COUNT(*) OVER()
-			FROM images WHERE `+
-		condition+` ORDER BY id ASC `+
-		database.FormatLimitOffset(limit, offset))
+			FROM images WHERE property_id = $1 ORDER BY ID DESC `, propertyId)
+		
+
 
 	if err != nil {
 		return nil, err
@@ -55,6 +42,14 @@ func RetrieveImages(c *gin.Context, db *sql.DB, limit, offset, referrerId, categ
 		if err != nil {
 			return nil, err
 		}
+
+		// we need Image Sizes now
+		location , err := RetrieveImageLocation(c, db, image.ImageSizeID)
+		if err != nil {
+			return nil, err
+		}
+		image.Location = location
+		
 
 		if image.ID != 0 {
 
@@ -72,8 +67,8 @@ func scanImages(rows *sql.Rows) (models.Image, error) {
 	var n int
 
 	err := rows.Scan(&image.ID,
-		&image.PageName,
-		&image.ImageSize,
+		&image.PropertyID,
+		&image.ImageSizeID,
 		&image.Image,
 		(*time.Time)(&image.CreatedAt),
 		(*time.Time)(&image.UpdatedAt),
@@ -83,4 +78,15 @@ func scanImages(rows *sql.Rows) (models.Image, error) {
 	return image, err
 }
 
+func RetrieveImageLocation(c *gin.Context, db *sql.DB, imageSizeId int) (string, error) {
+
+	var location string
+	err := db.QueryRowContext(c, `SELECT location FROM imageSizes WHERE ID = $1`, imageSizeId).Scan(&location)
+
+	if err != nil {
+		return "", err
+	}
+	return location, nil
+
+}
 

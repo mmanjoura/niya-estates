@@ -35,6 +35,8 @@ func GetByID(c *gin.Context) {
 			construction_area,
 			land_area,				
 			description,
+			youtube_video,
+			status,
 			created_at,
 			updated_at
 	FROM Properties WHERE ID = ?`, propertyID).
@@ -53,6 +55,8 @@ func GetByID(c *gin.Context) {
 			&property.ConstructionArea,
 			&property.LandArea,
 			&property.Description,
+			&property.YoutubeVideo,
+			&property.Status,
 			&property.CreatedAt,
 			&property.UpdatedAt)
 

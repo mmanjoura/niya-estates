@@ -41,10 +41,12 @@ func Create(c *gin.Context) {
 				construction_area,
 				land_area,				
 				description,
+				youtube_video,
+				status,
 				created_at,
 				updated_at
 			)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,	
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,	
 		newProperty.AgentID,	
 		newProperty.Title,
 		newProperty.Address,
@@ -59,6 +61,8 @@ func Create(c *gin.Context) {
 		newProperty.ConstructionArea,
 		newProperty.LandArea,
 		newProperty.Description,
+		newProperty.YoutubeVideo,
+		newProperty.Status,
 			
 		time.Now(),
 		time.Now())
@@ -114,16 +118,12 @@ func Create(c *gin.Context) {
 		propertyAmenities.Heater,
 		propertyAmenities.AirConditioning,
 	)
-
 		if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 		}
-
 		id, _ = amenity.LastInsertId()
 		newProperty.Amenities.Id = int(id)
-		
-
 
 		if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

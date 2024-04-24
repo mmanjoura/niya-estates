@@ -35,7 +35,7 @@ func Delete(productType string, referrerId, categoryId int) error {
 
 	ginContext := &gin.Context{}
 
-	tourImages, err := images.RetrieveImages(ginContext, db, 10, 0, referrerId, categoryId)
+	tourImages, err := images.RetrieveImages(ginContext, db, referrerId)
 
 	for _, tourImage := range tourImages {
 		// Create a Cloud Storage object handle

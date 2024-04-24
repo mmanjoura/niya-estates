@@ -52,9 +52,11 @@ func UpdateByID(c *gin.Context) {
 				construction_area,
 				land_area,				
 				description,
+				youtube_video,
+				status,
 				created_at,
 				updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		updatedProperty.AgentID,
 		updatedProperty.Title,
 		updatedProperty.Address,
@@ -69,6 +71,8 @@ func UpdateByID(c *gin.Context) {
 		updatedProperty.ConstructionArea,
 		updatedProperty.LandArea,
 		updatedProperty.Description,
+		updatedProperty.YoutubeVideo,
+		updatedProperty.Status,
 		time.Now(),
 		time.Now())
 
