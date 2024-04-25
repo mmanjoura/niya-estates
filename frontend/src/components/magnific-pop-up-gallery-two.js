@@ -1,10 +1,19 @@
 "use client"
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'magnific-popup/dist/magnific-popup.css';
 import $ from 'jquery'; // Ensure jQuery is imported
+import Link from 'next/link';
+import axios from 'axios';
 
-function PopUpImageGalleryTwo() {
+function PopUpImageGalleryTwo({params}) {
+    const [properties, setProperties] = useState(null)
+    const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
+
     useEffect(() => {
+        axios.get(`${baseURL}/properties`).then((response) => {
+            setProperties(response?.data);
+        });
         // Initialize Magnific Popup on your gallery
         $('.galary-overlay-hover').magnificPopup({
             type: 'image',
@@ -17,6 +26,19 @@ function PopUpImageGalleryTwo() {
           });
      
     }, []);
+  
+    if (!properties) {
+        return null
+    }
+    console.log("List of Properties", properties)
+    const property = properties?.data?.find((property) => property.id == params.id);
+    console.log("Property", property)
+    if (!property) {
+        return null
+    }
+    console.log("Property", properties)
+
+    console.log("We are here now");
 
     return (
         <div className='py-4'>

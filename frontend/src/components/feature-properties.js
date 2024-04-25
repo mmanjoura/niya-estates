@@ -20,12 +20,6 @@ export default  function FeaturesProperties() {
     return null
   }
 
-//   const filterImagesByLocation = (images, location) => {
-//     return images.filter(img => img.location === location);
-// };
-
-
-
 
   return (
     <>
@@ -64,7 +58,7 @@ export default  function FeaturesProperties() {
                     data-aos-delay={300}
                     key={featuresProperty.id}
                   >
-                    <Link href="property-details-2" className="card-link" />
+                    <Link href={`property-details-2/${featuresProperty.id}`} className="card-link" />
                     <div className="card-body p-0">
                       <div className="g-0 row">
                         <div className="bg-white col-lg-5 col-md-6 col-xl-3 position-relative">
@@ -79,8 +73,8 @@ export default  function FeaturesProperties() {
                           />
                             {/* /. End Image */}
                             {/* Start Tag */}
-                            <div className={`bg-${featuresProperty?.status === 'For Sale' ? 'primary' : 'white'} card-property-badge d-inline-block end-1 fs-13 fw-semibold position-absolute property-tags px-2 py-1 rounded-3 text-${featuresProperty?.status === 'For Sale' ? 'white' : 'primary'}  top-1`}>
-                              {featuresProperty?.status}
+                            <div className={`bg-${featuresProperty?.listing_type === 'For Sale' ? 'primary' : 'white'} card-property-badge d-inline-block end-1 fs-13 fw-semibold position-absolute property-tags px-2 py-1 rounded-3 text-${featuresProperty?.listing_type === 'For Sale' ? 'white' : 'primary'}  top-1`}>
+                              {featuresProperty?.listing_type}
                             </div>
                             {/*  /. End Tag */}
                           </div>
@@ -89,11 +83,11 @@ export default  function FeaturesProperties() {
                           <div className="d-flex flex-column h-100">
                             <div className="mb-4">
                               {/* Start Property Name */}
-                              <h6 className="fs-23 mb-2">      {featuresProperty?.name}</h6>
+                              <h6 className="fs-23 mb-2">      {featuresProperty?.title}</h6>
                               {/* /.End Property Name */}
                               <div className="fs-16">
                                 <i className="fa-solid fa-location-dot" />
-                                <span>  {featuresProperty?.location}</span>
+                                <span>  {featuresProperty?.address}</span>
                               </div>
                               {/* Start Property Description */}
                               <div className="mt-3">
@@ -105,17 +99,17 @@ export default  function FeaturesProperties() {
                             <div className="border card-property-facilities gap-2 hstack mt-auto p-3 pt-3 rounded-3 text-center">
                               <div className="">
                                 <i className="fa-solid fa-bed text-dark me-1" />
-                                <span>{featuresProperty.bedroom} bedroom</span>
+                                <span>{featuresProperty?.bedroom} bedroom</span>
                               </div>
                               <span className="vr" />
                               <div className="">
                                 <i className="fa-solid fa-bath text-dark me-1" />
-                                <span>{featuresProperty.bathroom} bathroom</span>
+                                <span>{featuresProperty?.bathroom} bathroom</span>
                               </div>
                               <span className="vr" />
                               <div className="">
                                 <i className="fa-solid fa-vector-square text-dark me-1" />
-                                <span>{featuresProperty.area} sqft</span>
+                                <span>{featuresProperty.living_area} sqm</span>
                               </div>
                             </div>
                             {/* /. End Card Property Facilities */}
@@ -127,12 +121,12 @@ export default  function FeaturesProperties() {
                             <div className="col col-xl-12">
                               <div className="align-items-sm-center d-sm-flex d-xl-block">
                                 <div className="d-flex justify-content-center align-items-end card-property-price flex-row gap-1">
-                                  <h2 className="m-0 fw-semibold text-primary">{featuresProperty?.price}</h2>
-                                  <div> /month</div>
+                                  <h2 className="m-0 fw-semibold text-primary">€{featuresProperty?.price}</h2>
+                                  {/* <div> /month</div> */}
                                 </div>
                                 <div className="flex-grow-1 mt-2 ms-sm-3 ms-xl-0 mt-xl-2 text-center">
                                   <strong className="small fw-semibold">(incl. VAT)</strong>
-                                  <div className="small">Per booking</div>
+                                  {/* <div className="small">Per booking</div> */}
                                 </div>
                               </div>
                             </div>

@@ -1,10 +1,37 @@
+'use client';
 import Layout from "@/components/Layout";
 import PopUpImageGalleryThree from "@/components/magnetic-pop-up-properti-details-three";
 import PopUpImageGalleryTwo from "@/components/magnific-pop-up-gallery-two";
 import PropertySticky from "@/components/property-sticky";
 import Link from "next/link";
+import axios from 'axios';
+import React, { use, useEffect, useState } from 'react';
 
-export default function PropertyDetailsTwo() {
+export default function PropertyDetailsTwo({ params }) {
+    const [properties, setProperties] = useState(null)
+ 
+    const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
+    useEffect(() => {
+        axios.get(`${baseURL}/properties`).then((response) => {
+            setProperties(response?.data);
+        
+        });
+    }, []);
+
+ if (!properties) {
+        return null
+    }
+
+    let property = properties?.data?.find((property) => property.id == params.id);
+    if (!property) {
+        return null
+    }
+  
+
+
+
+ 
     return (
         <Layout>
             {/* Start Main Content */}
@@ -48,7 +75,7 @@ export default function PropertyDetailsTwo() {
                                         className="breadcrumb-item d-flex align-items-center active"
                                         aria-current="page"
                                     >
-                                        Entire villa hosted by Wayan
+                                        {property?.title}
                                     </li>
                                 </ol>
                             </div>
@@ -59,14 +86,14 @@ export default function PropertyDetailsTwo() {
 
             
             {/* Start Masonry */}
-              <PopUpImageGalleryThree/>
+              <PopUpImageGalleryThree property = {property}/>
                 {/* /. End Masonry */}
                 {/* Start Sticky Property */}
-                <PropertySticky />
+                <PropertySticky property = {property}/>
                 {/* End Sticky Property */}
                 {/* Start Galary Items */}
                 <div id="galary" className="bg-dark py-5">
-                    <PopUpImageGalleryTwo/>
+                    <PopUpImageGalleryTwo params = {params}/>
                     {/* /. End Galary Items */}
                 </div>
                 {/*Related Articles*/}

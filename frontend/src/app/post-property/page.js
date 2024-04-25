@@ -125,7 +125,7 @@ export default function PostProperty() {
     const body = await res.json();
     setTimeout(() => {
       document.getElementById("SubmitForm").reset();
-      setLoading(false);
+      // setLoading(false);
     }
       , 1000);
 
