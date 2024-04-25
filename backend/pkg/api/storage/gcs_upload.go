@@ -84,6 +84,9 @@ func UploadImagesHandler(c *gin.Context) {
 
 	// Process each uploaded file
 	for _, file := range files {
+		// Check if we already big image for this product
+		bigImageExist, _ := checkBigImageExist(db, propertyID)
+
 		// Convert the multipart file into io.Reader
 		fileReader, err := common.FileHeaderToReader(file)
 		if err != nil {
@@ -108,20 +111,22 @@ func UploadImagesHandler(c *gin.Context) {
 		// Iterate over the image sizes and create a new image for each size
 		for _, imageSize := range imageSizes {
 
-			// We need imageSizeid, and PropertyId
-			
+			// If the big image already exists, skip the big image continue with the rest
+			if imageSize.ID == 10 && bigImageExist {
+				continue
+			}
 
 			// Resize the image to the specified size
 			resizedImage, err := ImageResize(img, imageSize.Width, imageSize.Height)
+
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			filePath := fullName +"/" + imageSize.Location + "_" + propertyIDStr + "_" + file.Filename
+			filePath := fullName + "/W" + strconv.Itoa(imageSize.Width) + "H" + strconv.Itoa(imageSize.Height) + "_" + imageSize.Location + "_" + propertyIDStr + "_" + file.Filename
 
 			// Create a new object in the bucket
 			obj := bucket.Object(filePath)
-			// w := obj.NewWriter(ctx)
 
 			imgReader, err := common.ImageToReader(resizedImage)
 			if err != nil {
@@ -139,6 +144,7 @@ func UploadImagesHandler(c *gin.Context) {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
+
 		}
 	}
 }
@@ -170,13 +176,11 @@ func getImageSizes(db *sql.DB) []models.ImageSize {
 
 func ImageResize(img image.Image, width, height int) (image.Image, error) {
 
-
 	// find the current size of the image
 	bounds := img.Bounds()
 	imgWidth := bounds.Dx()
 	imgHeight := bounds.Dy()
 
-	// If the image is already the correct size, return it
 	if imgWidth <= 800 || imgHeight <= 600 {
 		return nil, fmt.Errorf("Invalid size: %dx%d", imgWidth, imgHeight, "The size should be between 800 and 600")
 	}
@@ -212,3 +216,12 @@ func insertImage(db *sql.DB, propertyID, imageSizeID int, image string) error {
 	return nil
 }
 
+// Check if the big image already exists in image table
+func checkBigImageExist(db *sql.DB, propertyID int) (bool, error) {
+	var bigImage string
+	err := db.QueryRow("SELECT image FROM images WHERE property_id = $1 AND image_size_id = 10", propertyID).Scan(&bigImage)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}

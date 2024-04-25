@@ -36,6 +36,26 @@ func UpdateByID(c *gin.Context) {
 		return
 	}
 
+	//Get listing type given listype id
+	var listingType string
+	err = db.QueryRow("SELECT name FROM listingTypes WHERE id = ?", updatedProperty.ListingType).Scan(&listingType)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	updatedProperty.ListingType = listingType
+
+	// Get property type given property type id
+	var property_type string
+	err = db.QueryRow("SELECT name FROM propertyTypes WHERE id = ?", updatedProperty.PropertyType).Scan(&property_type)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	updatedProperty.PropertyType = property_type
+
+
+
 	_, err = db.ExecContext(c, `
 		INSERT INTO properties (
 				agent_id,

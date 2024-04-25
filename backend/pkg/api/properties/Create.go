@@ -8,7 +8,7 @@ import (
 	"github.com/mmanjoura/niya-estates/backend/pkg/models"
 
 	"github.com/gin-gonic/gin"
-	"fmt"
+
 )
 
 
@@ -21,7 +21,26 @@ func Create(c *gin.Context) {
 	}
 
 	propertyAmenities := newProperty.Amenities
-	fmt.Println(propertyAmenities)
+
+	//Get listing type given listype id
+	var listingType string
+	err := database.Database.DB.QueryRow("SELECT name FROM listingTypes WHERE id = ?", newProperty.ListingType).Scan(&listingType)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	newProperty.ListingType = listingType
+
+	// Get property type given property type id
+	var propertyType string
+	err = database.Database.DB.QueryRow("SELECT name FROM propertyTypes WHERE id = ?", newProperty.PropertyType).Scan(&propertyType)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	newProperty.PropertyType = propertyType
+	
+
 
 	db := database.Database.DB
 
