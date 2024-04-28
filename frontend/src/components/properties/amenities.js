@@ -31,9 +31,9 @@ const getAmenityIcon = (amenity) => {
       case 'jacuzzi':
         return <i className="fa-solid fa-hot-tub fs-18" />;
       case 'video_surveillance':
-        return <i className="fa-solid fa fa-video-camera fs-18" />;
-      case 'alarm_system':     
-        return <i className="fa-solid fa-alarm-clock fs-18" />;
+        return <i className="fa-solid fa-video-camera fs-18" />;
+      case 'alarm_system':          
+        return <i className="fa-solid fa-light-emergency-on" />;
       case 'elevator':
         return <i className="fa-solid fa-elevator fs-18" />;
       case 'playground':
