@@ -1,38 +1,47 @@
 "use client"
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import StickyBox from "react-sticky-box";
 import GooglePropertyDetailsMapsComponent from './property-details-map';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import Link from 'next/link';
 import Amenities from './properties/amenities';
-const PropertySticky = ({property}) => {
-   const [selectedDate1, setSelectedDate1] = useState(null);
-  const [selectedDate2, setSelectedDate2] = useState(null);
-  
-  const datePickerRef1 = useRef(null);
-  const datePickerRef2 = useRef(null);
+import ProtectAdminRoute from './utils/ProtectAdminRoute';
 
-  const handleDateChange1 = (date) => {
-    setSelectedDate1(date);
-  };
+const PropertySticky = ({ property }) => {
+    const [selectedDate1, setSelectedDate1] = useState(null);
+    const [selectedDate2, setSelectedDate2] = useState(null);
 
-  const handleDateChange2 = (date) => {
-    setSelectedDate2(date);
-  };
+    const [user, setUser] = useState({});
+    useEffect(() => {
+        setUser(ProtectAdminRoute());
+    
+      }, []);
 
-  const handleIconClick1 = () => {
-    if (datePickerRef1.current) {
-      datePickerRef1.current.setOpen(true);
-    }
-  };
 
-  const handleIconClick2 = () => {
-    if (datePickerRef2.current) {
-      datePickerRef2.current.setOpen(true);
-    }
-  };
-   
+    const datePickerRef1 = useRef(null);
+    const datePickerRef2 = useRef(null);
+
+    const handleDateChange1 = (date) => {
+        setSelectedDate1(date);
+    };
+
+    const handleDateChange2 = (date) => {
+        setSelectedDate2(date);
+    };
+
+    const handleIconClick1 = () => {
+        if (datePickerRef1.current) {
+            datePickerRef1.current.setOpen(true);
+        }
+    };
+
+    const handleIconClick2 = () => {
+        if (datePickerRef2.current) {
+            datePickerRef2.current.setOpen(true);
+        }
+    };
+
     return (
         <div className="h-details_content py-5">
             <div className="container py-4">
@@ -59,7 +68,7 @@ const PropertySticky = ({property}) => {
                                     <span className="vr" />
                                     <div className="">
                                         <i className="fa-solid fa-vector-square text-dark me-1" />
-                                        <span>{property?.living_area} sqmtr</span>
+                                        <span>{property?.living_area} sq / meter</span>
                                     </div>
                                     <span className="vr" />
                                     <div className="">
@@ -74,16 +83,16 @@ const PropertySticky = ({property}) => {
                                 <h4 className="fw-semibold mb-4 text-capitalize">About the <span className="underline position-relative text-primary"> property</span></h4>
                                 {/* End Title */}
                                 <p>
-                                {property?.description}
+                                    {property?.description}
                                 </p>
-                            
+
                             </div>
                             {/* Start Amenities Content */}
                             <div className="mb-5 border-bottom pb-5">
                                 {/* Start Title */}
                                 <h4 className="fw-semibold mb-4 text-capitalize">Amenities <span className="underline position-relative text-primary">available</span></h4>
                                 {/* End Title */}
-                                <Amenities amenities={property?.amenities} />       
+                                <Amenities amenities={property?.amenities} />
                             </div>
                             {/* /.End Amenities Content */}
                             {/* Start Floor Plans */}
@@ -92,11 +101,19 @@ const PropertySticky = ({property}) => {
                                 <h4 className="fw-semibold mb-4 text-capitalize">Floor <span className="underline position-relative text-primary">Plans</span></h4>
                                 {/* /.End Title */}
                                 {/* Start Image */}
-                                <img
-                                    src="assets/img/png-img/floor-plans.png"
-                                    alt=""
-                                    className="img-fluid"
-                                />
+                                {property?.images
+                                    ?.filter(img => img?.location === 'floor_plans')
+                                    .slice(0, 1) // Limit to the specified number of images
+                                    .map((image, index) => (
+
+                                        <img key={index}
+                                            src={image?.image}
+                                            alt=""
+                                            className="h-100 w-100 object-fit-cover"
+                                        />
+
+                                    ))
+                                }
                                 {/* /.End Image */}
                             </div>
                             {/* /.End Floor Plans */}
@@ -111,11 +128,19 @@ const PropertySticky = ({property}) => {
                                         <div className="avatar rounded-circle p-1 border border-primary">
                                             {/* Start Avatar Image */}
                                             <Link href="agent-details">
-                                                <img
-                                                    src="assets/img/avatar/01.jpg"
-                                                    alt=""
-                                                    className="avatar-img rounded-circle"
-                                                />
+
+                                                {property?.images
+                                                    ?.filter(img => img?.location === 'floor_plans')
+                                                    .slice(0, 1) // Limit to the specified number of images
+                                                    .map((image, index) => (
+                                                        <img key={index}
+                                                            src={image?.image}
+                                                            alt=""
+                                                            className="avatar-img rounded-circle"
+                                                        />
+
+                                                    ))
+                                                }
                                             </Link>
                                             {/* /.End Avatar Image */}
                                             <div className="align-items-center avatar-badge bg-primary d-flex justify-content-center position-absolute rounded-circle text-white">
@@ -125,7 +150,7 @@ const PropertySticky = ({property}) => {
                                     </div>
                                     <div className="flex-grow-1 ms-3">
                                         <h5 className="mb-1">
-                                            <Link href="agent-details">Alexander Kaminski</Link>
+                                            <Link href="agent-details">{user?.full_name}</Link>
                                         </h5>
                                         <div>Property Advisor</div>
                                         <div className="row g-2 mt-3">
@@ -175,8 +200,10 @@ const PropertySticky = ({property}) => {
                     <div className="col-lg-4">
                         <StickyBox>
                             <div className="appointment-form p-3 p-lg-4 p-xl-5 rounded-4 shadow">
-                                <div>Property for rent</div>
-                                <h2 className="fw-bold">$17,000 USD</h2>
+                                <div>Property {property?.listing_type}
+
+                                </div>
+                                <h2 className="fw-bold">€ {property?.price}</h2>
                                 {/* Start Tabs Nav */}
                                 <ul className="nav nav-tabs mb-5" role="tablist">
                                     <li className="nav-item" role="presentation">
@@ -320,8 +347,8 @@ const PropertySticky = ({property}) => {
                                                     <div className="form-group has-icon">
                                                         <label className="required fw-semibold required text-dark">Appointment Date</label>
                                                         <DatePicker
-                                                             selected={selectedDate2}
-                                                             onChange={handleDateChange2}
+                                                            selected={selectedDate2}
+                                                            onChange={handleDateChange2}
                                                             placeholderText="Click to select a date"
                                                             dateFormat="MM-dd-yyyy"
                                                             className="form-control datepicker"
