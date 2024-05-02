@@ -34,8 +34,11 @@ func GetByID(c *gin.Context) {
 			parking_lots
 			construction_area,
 			land_area,				
-			description,
+			year_built,
+			short_description,
+			long_description,
 			youtube_video,
+			google_map,
 			status,
 			created_at,
 			updated_at
@@ -54,8 +57,11 @@ func GetByID(c *gin.Context) {
 			&property.ParkingLots,
 			&property.ConstructionArea,
 			&property.LandArea,
-			&property.Description,
+			&property.YearBuilt,
+			&property.ShortDescription,
+			&property.LongDescription,
 			&property.YoutubeVideo,
+			&property.GoogleMap,
 			&property.Status,
 			&property.CreatedAt,
 			&property.UpdatedAt)

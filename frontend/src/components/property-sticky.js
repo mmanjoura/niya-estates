@@ -73,7 +73,8 @@ const PropertySticky = ({ property }) => {
                                     <span className="vr" />
                                     <div className="">
                                         <i className="fa-solid fa-calendar-days text-dark me-1" />
-                                        <span>Built in 2010</span>
+                                        {/* return only the first 4 character of the string */}
+                                        <span>Built in {property?.year_built.substring(0, 4) }</span>
                                     </div>
                                 </div>
                                 {/* /. End Card Property Facilities */}
@@ -83,7 +84,7 @@ const PropertySticky = ({ property }) => {
                                 <h4 className="fw-semibold mb-4 text-capitalize">About the <span className="underline position-relative text-primary"> property</span></h4>
                                 {/* End Title */}
                                 <p>
-                                    {property?.description}
+                                    {property?.long_description}
                                 </p>
 
                             </div>

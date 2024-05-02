@@ -1,7 +1,6 @@
 package models
 
 import (
-
 	"time"
 )
 
@@ -20,11 +19,14 @@ type Property struct {
 	ParkingLots      string    `json:"parking_lots"`
 	ConstructionArea string    `json:"construction_area"`
 	LandArea         string    `json:"land_area"`
-	Description      string    `json:"description"`
+	YearBuilt        string    `json:"year_built"`
+	ShortDescription string    `json:"short_description"`
+	LongDescription  string    `json:"long_description"`
 	YoutubeVideo     string    `json:"youtube_video"`
+	GoogleMap        string    `json:"google_map"`
 	Status           string    `json:"status"`
 	Amenities        Amenities `json:"amenities"`
-	Images           []Image `json:"images"`
+	Images           []Image   `json:"images"`
 	CreatedAt        time.Time `json:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at"`
 }
@@ -49,4 +51,3 @@ type Amenities struct {
 	Heater            bool `json:"heater"`
 	AirConditioning   bool `json:"air_conditioning"`
 }
-

@@ -1,8 +1,14 @@
 'use client';
-import { useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
-const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
-  const [formData, setFormData] = useState({  
+const PropertyInfo = ({ onSubmit, onPropertyChange, onListingTypeChange, onDateChange }) => {
+
+  const [selectedDate, setSelectedDate] = useState(null);
+  const datePickerRef1 = useRef(null);
+  const datePickerRef2 = useRef(null);
+  const [formData, setFormData] = useState({
 
     agent_id: "",
     title: "",
@@ -17,8 +23,11 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
     parking_lots: "",
     construction_area: "",
     land_area: "",
-    description: "",
+    year_built: "",
+    short_description: "",
+    long_description: "",
     youtube_video: "",
+    google_map: "",
     status: "",
     amenities: "",
 
@@ -26,12 +35,12 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
 
 
 
-  const handlePropetyTypeChange = (e) => { 
+  const handlePropetyTypeChange = (e) => {
     onPropertyChange(e.target.value)
-    console.log("Child component", e.target.value)  
-    
+    console.log("Child component", e.target.value)
+
   };
-  
+
   const handleListingTypeChange = (e) => {
     console.log("Child component", e.target.value)
     onListingTypeChange(e.target.value)
@@ -41,6 +50,27 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
   const handleChange = (e) => {
     onSubmit(e)
   };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    onDateChange(date)
+
+};
+
+const handleDateChange2 = (date) => {
+    setSelectedDate2(date);
+};
+const handleIconClick1 = () => {
+  if (datePickerRef1.current) {
+      datePickerRef1.current.setOpen(true);
+  }
+};
+
+const handleIconClick2 = () => {
+  if (datePickerRef2.current) {
+      datePickerRef2.current.setOpen(true);
+  }
+};
 
   return (
     <div className="row gx-3 gy-4">
@@ -225,18 +255,59 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
         </div>
         {/* /.End Form Group */}
       </div>
+      <div className="col-sm-4">
+        {/* Start Search Input With Icon */}
+        <div className="form-group has-icon">
+          <label className="required fw-semibold required text-dark">
+            Date built
+          </label>
+          <DatePicker
+            selected={selectedDate}
+            onChange={handleDateChange}
+            placeholderText="Click to select a date"
+            dateFormat="MM-dd-yyyy"
+            className="form-control datepicker"
+            name='year_built'
+            ref={datePickerRef1}
+          />
+          <i
+            className="fa-regular fa-calendar-days form-icon fs-16 position-absolute top-50"
+            onClick={handleIconClick1}
+          />
+
+        </div>
+        {/* End Search Input With Icon */}
+      </div>
       <div className="col-md-12">
         {/* Start Form Group */}
         <div className="form-group">
           <label className="required">
-            Listing Description
+            Short Description
           </label>
           <textarea
             className="form-control"
             placeholder="Please enter up to 240 characters."
-            rows={4}
+            rows={3}
             required
-            name="description"
+            name="short_description"
+            onChange={handleChange}
+
+          />
+        </div>
+        {/* /.End Form Group */}
+      </div>
+      <div className="col-md-12">
+        {/* Start Form Group */}
+        <div className="form-group">
+          <label className="required">
+            Long Description
+          </label>
+          <textarea
+            className="form-control"
+            placeholder="Please enter up to 240 characters."
+            rows={5}
+            required
+            name="long_description"
             onChange={handleChange}
 
           />
@@ -254,6 +325,24 @@ const PropertyInfo = ({ onSubmit,  onPropertyChange, onListingTypeChange }) => {
             name="youtube_video"
             className="form-control"
             placeholder="ex. 4795 sqft"
+            onChange={handleChange}
+
+          />
+        </div>
+        {/* /.End Form Group */}
+      </div> 
+      <div className="col-md-12">
+        {/* Start Form Group */}
+        <div className="form-group">
+          <label className="required">
+            Google Map URL
+          </label>
+          <input
+            id="google_map"
+            type="text"
+            name="google_map"
+            className="form-control"
+            placeholder="ex: <iframe></iframe>"
             onChange={handleChange}
 
           />

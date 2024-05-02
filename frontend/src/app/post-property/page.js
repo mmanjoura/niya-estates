@@ -17,6 +17,7 @@ export default function PostProperty() {
   const [listing_type, setListingType] = useState("");
   const [user, setUser] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
+  const [selectedDate, setSelectedDate] = useState("");
   const [amenities, setAmenities] = useState({
 
     Garden : false,
@@ -51,8 +52,11 @@ export default function PostProperty() {
     parking_lots: '',
     construction_area: '',
     land_area: '',
-    description: '',
-    youtube_video: '',
+    year_built: "",
+    short_description: "",
+    long_description: "",
+    youtube_video: "",
+    google_map: "",
     status: '',
     amenities: '',
   });
@@ -66,6 +70,13 @@ export default function PostProperty() {
     setPropertyType(e);
 
   };
+
+  const handleDateChange = (e) => {
+
+    setSelectedDate(e);
+
+  };
+
   const handleListingTypeChange = (e) => {
     setListingType(e);
 
@@ -96,6 +107,7 @@ export default function PostProperty() {
     formData.property_type = property_type;
     formData.listing_type = listing_type;
     formData.amenities = amenities;
+    formData.year_built = selectedDate;
     const res = await fetch(baseURL + '/properties', {
       method: "POST",
       headers: {
@@ -116,8 +128,11 @@ export default function PostProperty() {
         parking_lots: formData.parking_lots,
         construction_area: formData.construction_area,
         land_area: formData.land_area,
-        description: formData.description,
+        year_built: formData.year_built,
+        short_description: formData.short_description,
+        long_description: formData.long_description,
         youtube_video: formData.youtube_video,
+        google_map: formData.google_map,
         status: formData.status,
         amenities: formData.amenities,
       }),
@@ -171,7 +186,7 @@ export default function PostProperty() {
 
                 <div className="row gx-3 gy-4">
                   <PropertyInfoHeader />
-                  <PropertyInfo onSubmit={handleChange} onPropertyChange={handlePropetyTypeChange} onListingTypeChange={handleListingTypeChange} />
+                  <PropertyInfo onSubmit={handleChange} onPropertyChange={handlePropetyTypeChange} onListingTypeChange={handleListingTypeChange} onDateChange={handleDateChange} />
                   <div className="col-md-12">
                     <div className="fw-medium text-dark mb-3">
                       Property amenities

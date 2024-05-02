@@ -1,10 +1,12 @@
 package storage
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"fmt"
 	"image"
+	"image/jpeg"
 	"io"
 	"net/http"
 	"strconv"
@@ -24,6 +26,8 @@ const (
 	googleProjectIDKey  = "GOOGLE-PROJECT-ID"
 )
 
+type ImageConverter struct{}
+
 // UploadImagesHandler handles image uploads.
 func UploadImagesHandler(c *gin.Context) {
 	// Retrieve configuration information from the database
@@ -33,7 +37,7 @@ func UploadImagesHandler(c *gin.Context) {
 	db := database.Database.DB
 
 	propertyID, err := strconv.Atoi(c.Query("propertyId"))
-	fullName := c.Query("fullName")
+	fullName := c.Query("full_name")
 	if err != nil || propertyID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or missing ID"})
 		return
@@ -44,7 +48,7 @@ func UploadImagesHandler(c *gin.Context) {
 	propertyIDStr := strconv.Itoa(propertyID)
 
 	// Parse multipart form for file uploads
-	if err := c.Request.ParseMultipartForm(500000); err != nil {
+	if err := c.Request.ParseMultipartForm(5000000); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -85,7 +89,6 @@ func UploadImagesHandler(c *gin.Context) {
 	// Process each uploaded file
 	for _, file := range files {
 		// Check if we already big image for this product
-		bigImageExist, _ := checkBigImageExist(db, propertyID)
 
 		// Convert the multipart file into io.Reader
 		fileReader, err := common.FileHeaderToReader(file)
@@ -111,11 +114,10 @@ func UploadImagesHandler(c *gin.Context) {
 		// Iterate over the image sizes and create a new image for each size
 		for _, imageSize := range imageSizes {
 
-			// If the big image already exists, skip the big image continue with the rest
-			if imageSize.ID == 10 && bigImageExist {
+			// if imageSizes is > 1 and imageSize.location = floor_plans, skip the iteration
+			if len(imageSizes) > 1 && imageSize.Location == "floor_plans" {
 				continue
 			}
-
 			// Resize the image to the specified size
 			resizedImage, err := ImageResize(img, imageSize.Width, imageSize.Height)
 
@@ -128,11 +130,13 @@ func UploadImagesHandler(c *gin.Context) {
 			// Create a new object in the bucket
 			obj := bucket.Object(filePath)
 
-			imgReader, err := common.ImageToReader(resizedImage)
+			 imgReader, err := common.ImageToReader(resizedImage)
+
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
+
 			if err := uploadFileToStorage(ctx, obj, imgReader); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
@@ -181,8 +185,8 @@ func ImageResize(img image.Image, width, height int) (image.Image, error) {
 	imgWidth := bounds.Dx()
 	imgHeight := bounds.Dy()
 
-	if imgWidth <= 800 || imgHeight <= 600 {
-		return nil, fmt.Errorf("Invalid size: %dx%d", imgWidth, imgHeight, "The size should be between 800 and 600")
+	if imgWidth <= 853 || imgHeight <= 568 {
+		return nil, fmt.Errorf("Invalid size: %dx%d", imgWidth, imgHeight, "The size should be between 853 and 568")
 	}
 
 	croppedImage := imaging.CropAnchor(img, 800, 600, imaging.Center)
@@ -225,3 +229,4 @@ func checkBigImageExist(db *sql.DB, propertyID int) (bool, error) {
 	}
 	return true, nil
 }
+
