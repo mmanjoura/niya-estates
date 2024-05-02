@@ -58,7 +58,7 @@ func UpdateByID(c *gin.Context) {
 
 	_, err = db.ExecContext(c, `
 		INSERT INTO properties (
-				agent_id,
+				user_id,
 				title,
 				address,
 				city,				
@@ -80,7 +80,7 @@ func UpdateByID(c *gin.Context) {
 				created_at,
 				updated_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		updatedProperty.AgentID,
+		updatedProperty.UserID,
 		updatedProperty.Title,
 		updatedProperty.Address,
 		updatedProperty.City,

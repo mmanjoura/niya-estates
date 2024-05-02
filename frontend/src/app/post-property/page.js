@@ -14,6 +14,7 @@ export default function PostProperty() {
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
   const [property_type, setPropertyType] = useState("");
+  const [user_type, setUserType] = useState("");
   const [listing_type, setListingType] = useState("");
   const [user, setUser] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
@@ -39,12 +40,13 @@ export default function PostProperty() {
 
   });
   const [formData, setFormData] = useState({
-    agent_id: user?.user_id,
+    user_id: user?.user_id,
     title: '',
     address: '',
     city: '',
     property_type: '',
     listing_type: '',   
+    user_type: '',
     price: '',
     living_area: '',
     bedroom: '',
@@ -55,6 +57,7 @@ export default function PostProperty() {
     year_built: "",
     short_description: "",
     long_description: "",
+    profile: "",
     youtube_video: "",
     google_map: "",
     status: '',
@@ -68,13 +71,14 @@ export default function PostProperty() {
 
   const handlePropetyTypeChange = (e) => {
     setPropertyType(e);
-
+  };
+  const handleUserTypeChange = (e) => {
+    setUserType(e);
+    console.log("User Type", user_type)
   };
 
   const handleDateChange = (e) => {
-
     setSelectedDate(e);
-
   };
 
   const handleListingTypeChange = (e) => {
@@ -103,7 +107,7 @@ export default function PostProperty() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    formData.agent_id = user?.user_id;
+    formData.user_id = user?.user_id;
     formData.property_type = property_type;
     formData.listing_type = listing_type;
     formData.amenities = amenities;
@@ -115,12 +119,13 @@ export default function PostProperty() {
       },
 
       body: JSON.stringify({
-        agent_id: formData.agent_id,
+        user_id: formData.user_id,
         title: formData.title,
         address: formData.address,
         city: formData.city,
         property_type: formData.property_type,
         listing_type: formData.listing_type,
+        user_type: user_type,
         price: formData.price,
         living_area: formData.living_area,
         bedroom: formData.bedroom,
@@ -131,6 +136,7 @@ export default function PostProperty() {
         year_built: formData.year_built,
         short_description: formData.short_description,
         long_description: formData.long_description,
+        profile: formData.profile,
         youtube_video: formData.youtube_video,
         google_map: formData.google_map,
         status: formData.status,
@@ -182,7 +188,7 @@ export default function PostProperty() {
             <Herro />
             <div className="row justify-content-center g-4">
               <form className="col-lg-8" id="SubmitForm" >
-                <Profile user={user} />
+                <Profile user={user} onSubmit={handleChange} onUserTypeChange={handleUserTypeChange}/>
 
                 <div className="row gx-3 gy-4">
                   <PropertyInfoHeader />

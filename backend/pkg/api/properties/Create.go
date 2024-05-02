@@ -46,7 +46,7 @@ func Create(c *gin.Context) {
 
 	result, err := db.ExecContext(c, `
 			INSERT INTO properties (
-				agent_id,
+				user_id,
 				title,
 				address,
 				city,				
@@ -69,7 +69,7 @@ func Create(c *gin.Context) {
 				updated_at
 			)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,	
-		newProperty.AgentID,	
+		newProperty.UserID,	
 		newProperty.Title,
 		newProperty.Address,
 		newProperty.City,

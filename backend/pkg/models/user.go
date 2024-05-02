@@ -8,20 +8,21 @@ type SignIn struct {
 }
 
 type SignUp struct {
-	ID       int    `json:"id"`
-	FullName string `json:"full_name" binding:"required"`
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	ID          int    `json:"id"`
+	FullName    string `json:"full_name" binding:"required"`
+	Email       string `json:"email" binding:"required"`
+	Password    string `json:"password" binding:"required"`
 	PhoneNumber string `json:"phone_number"`
 }
 
 type User struct {
-	ID        int       `json:"id"`
-	FullName  string    `json:"full_name" binding:"required"`
-	Email     string    `json:"email" binding:"required"`
-	Password  string    `json:"password" binding:"required"`
+	ID          int    `json:"id"`
+	FullName    string `json:"full_name" binding:"required"`
+	Email       string `json:"email" binding:"required"`
+	Password    string `json:"password" binding:"required"`
 	PhoneNumber string `json:"phone_number"`
-	UserType  string       `json:"user_type"`
+	UserType    string `json:"user_type"`
+	Profile     string `json:"profile"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

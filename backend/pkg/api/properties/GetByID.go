@@ -21,7 +21,7 @@ func GetByID(c *gin.Context) {
 
 	var property models.Property
 	err = db.QueryRowContext(c, `SELECT id,
-			agent_id,
+			user_id,
 			title,
 			address,
 			city,				
@@ -44,7 +44,7 @@ func GetByID(c *gin.Context) {
 			updated_at
 	FROM Properties WHERE ID = ?`, propertyID).
 		Scan(&property.ID,
-			&property.AgentID,
+			&property.UserID,
 			&property.Title,
 			&property.Address,
 			&property.City,

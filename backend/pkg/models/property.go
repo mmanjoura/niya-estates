@@ -6,12 +6,13 @@ import (
 
 type Property struct {
 	ID               int       `json:"id"`
-	AgentID          string    `json:"agent_id"`
+	UserID          string    `json:"user_id"`
 	Title            string    `json:"title"`
 	Address          string    `json:"address"`
 	City             string    `json:"city"`
 	PropertyType     string    `json:"property_type"`
 	ListingType      string    `json:"listing_type"`
+	UserType         string    `json:"user_type"`
 	Price            string    `json:"price"`
 	LivingArea       string    `json:"living_area"`
 	Bedroom          string    `json:"bedroom"`
@@ -22,6 +23,7 @@ type Property struct {
 	YearBuilt        string    `json:"year_built"`
 	ShortDescription string    `json:"short_description"`
 	LongDescription  string    `json:"long_description"`
+	Profile          string    `json:"profile"`
 	YoutubeVideo     string    `json:"youtube_video"`
 	GoogleMap        string    `json:"google_map"`
 	Status           string    `json:"status"`

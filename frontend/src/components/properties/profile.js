@@ -1,9 +1,18 @@
 import React from 'react';
 
-const Profile = ({ user }) => {
+const Profile = ({ user, onSubmit, onUserTypeChange }) => {
   if (!user) {
     return null; // Render nothing if user is undefined
   }
+
+  const handleUserTypeChange = (e) => {
+    onUserTypeChange(e.target.value)
+
+  };
+  const handleChange = (e) => {
+    onSubmit(e)
+  };
+
 
   return (
     <div className="shadow p-4 p-sm-5 rounded-4 mb-4">
@@ -53,6 +62,40 @@ const Profile = ({ user }) => {
             />
           </div>
         </div>
+        <div className="col-md-6">
+        {/* Start Form Group */}
+        <div className="form-group">
+          <label className="required">User Type</label>
+          <select
+            className="form-select"
+            aria-label="Default select example"
+            onChange={handleUserTypeChange}                           >
+            <option value={0}>Select</option>
+            <option value={1}>Estate Agent</option>
+            <option value={2}>Property Owner</option>
+          </select>
+        </div>
+        {/* /.End Form Group */}
+      </div>
+      <div className="col-md-12">
+        {/* Start Form Group */}
+        <div className="form-group">
+          <label className="required">
+            Profile
+          </label>
+          <textarea
+            className="form-control"
+            placeholder="Please enter up to 240 characters."
+            rows={5}
+            required
+            name="profile"
+            onChange={handleChange}
+
+
+          />
+        </div>
+        {/* /.End Form Group */}
+      </div>
       </div>
     </div>
   );

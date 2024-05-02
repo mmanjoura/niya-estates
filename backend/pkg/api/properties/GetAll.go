@@ -32,7 +32,7 @@ func RetrieveProperties(c *gin.Context, db *sql.DB, limit, offset int) ([]models
 	properties := []models.Property{}
 
 	rows, err := db.QueryContext(c, `SELECT id,
-	agent_id,
+	user_id,
 	title,
 	address,
 	city,				
@@ -93,7 +93,7 @@ func scanProperty(rows *sql.Rows) (models.Property, error) {
 	property := models.Property{}
 
 	err := rows.Scan(&property.ID,
-		&property.AgentID,
+		&property.UserID,
 		&property.Title,
 		&property.Address,
 		&property.City,

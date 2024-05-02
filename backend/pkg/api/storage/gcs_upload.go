@@ -1,12 +1,10 @@
 package storage
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
 	"fmt"
 	"image"
-	"image/jpeg"
 	"io"
 	"net/http"
 	"strconv"

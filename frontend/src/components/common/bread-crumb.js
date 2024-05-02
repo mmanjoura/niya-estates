@@ -8,20 +8,6 @@ export const BreadCrumbs = () => {
       <div className="border-start col-auto">
         <ol className="align-items-center breadcrumb fw-medium mb-0">
           <li className="breadcrumb-item d-flex align-items-center">
-
-            <Link href="post-image" className="text-decoration-none">
-              <i className="fa-solid fa-person fs-18" style={{ padding: '0 15px' }}></i>
-              Register an Agent
-            </Link>
-
-
-          </li>
-        </ol>
-      </div>
-
-      <div className="border-start col-auto">
-        <ol className="align-items-center breadcrumb fw-medium mb-0">
-          <li className="breadcrumb-item d-flex align-items-center">
             <Link href="/post-property" className="text-decoration-none">
               <i className="fa-solid fa-house-chimney-crack fs-18" style={{ padding: '0 15px' }} />
               Add Property
@@ -32,27 +18,20 @@ export const BreadCrumbs = () => {
       <div className="border-start col-auto">
         <ol className="align-items-center breadcrumb fw-medium mb-0">
           <li className="breadcrumb-item d-flex align-items-center">
-
             <Link href="post-image" className="text-decoration-none">
               <i className="fa-solid fa-circle fs-18" style={{ padding: '0 15px' }}></i>
               Upload Images
             </Link>
-
-
           </li>
         </ol>
       </div>
-
       <div className="border-start col-auto">
         <ol className="align-items-center breadcrumb fw-medium mb-0">
           <li className="breadcrumb-item d-flex align-items-center">
-
             <Link href="post-image" className="text-decoration-none">
               <i className="fa-solid fa-database fs-18" style={{ padding: '0 15px' }}></i>
               Datagase Backup
             </Link>
-
-
           </li>
         </ol>
       </div>
