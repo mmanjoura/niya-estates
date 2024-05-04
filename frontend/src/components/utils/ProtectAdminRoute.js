@@ -7,6 +7,7 @@ const ProtectAdminRoute = () => {
       user_type: window.localStorage.getItem('user_type'),
       phone_number: window.localStorage.getItem('user_phone'),
       user_id: window.localStorage.getItem('user_id'),
+      profile: window.localStorage.getItem('profile')
     };
 
     return user;

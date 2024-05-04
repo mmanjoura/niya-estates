@@ -11,6 +11,8 @@ export default function SignIn() {
   const [full_name, setFullName] = useState("");
   const [user_type, setUserType] = useState("");
   const [error, setError] = useState("");
+  const [user_phone, setUserPhone] = useState("");
+  const [profile , setProfile] = useState("");
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -48,6 +50,7 @@ export default function SignIn() {
     window.localStorage.setItem('user_email', data?.user?.email);   
     window.localStorage.setItem('user_phone', data?.user?.phone_number);  
     window.localStorage.setItem('user_id', data?.user?.id);  
+    window.localStorage.setItem('profile', data?.user?.profile);
     window.location.href = "/post-property";
   }
   return (

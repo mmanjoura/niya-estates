@@ -40,8 +40,8 @@ func LoginHandler(c *gin.Context) {
 	}
 
 	// Fetch the user from the database
-	err := db.QueryRow("SELECT id, full_name, email, password, phone_number, user_type, Created_At, Updated_At FROM users WHERE email = ?", incomingUser.Email).
-		Scan(&dbUser.ID, &dbUser.FullName, &dbUser.Email, &dbUser.Password, &dbUser.PhoneNumber, &dbUser.UserType, &dbUser.CreatedAt, &dbUser.UpdatedAt)
+	err := db.QueryRow("SELECT id, full_name, email, password, phone_number, user_type, profile, Created_At, Updated_At FROM users WHERE email = ?", incomingUser.Email).
+		Scan(&dbUser.ID, &dbUser.FullName, &dbUser.Email, &dbUser.Password, &dbUser.PhoneNumber, &dbUser.UserType, &dbUser.Profile, &dbUser.CreatedAt, &dbUser.UpdatedAt)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

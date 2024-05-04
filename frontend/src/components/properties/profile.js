@@ -3,7 +3,7 @@ import React from 'react';
 const Profile = ({ user, onSubmit, onUserTypeChange }) => {
   if (!user) {
     return null; // Render nothing if user is undefined
-  }
+  }  
 
   const handleUserTypeChange = (e) => {
     onUserTypeChange(e.target.value)
@@ -85,14 +85,13 @@ const Profile = ({ user, onSubmit, onUserTypeChange }) => {
             Profile
           </label>
           <textarea
+          value={user?.profile || ''}
             className="form-control"
             placeholder="Please enter up to 240 characters."
             rows={5}
             required
             name="profile"
             onChange={handleChange}
-
-
           />
         </div>
         {/* /.End Form Group */}

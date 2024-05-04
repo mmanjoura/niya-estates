@@ -20,6 +20,11 @@ export default  function FeaturesProperties() {
     return null
   }
 
+  function financial(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+    
+
 
   return (
     <>
@@ -66,7 +71,7 @@ export default  function FeaturesProperties() {
                             {/* Start Image */}
                           <img
                             src={featuresProperty?.images
-                              ?.filter(img => img.location === 'product_list')
+                              ?.filter(img => img.location === 'product_list' && img.default_image === 1)
                               .map(img => img.image)[0]}
                             alt=""
                             className="h-100 w-100 object-fit-cover"
@@ -91,7 +96,8 @@ export default  function FeaturesProperties() {
                               </div>
                               {/* Start Property Description */}
                               <div className="mt-3">
-                                {featuresProperty?.short_description}
+                                {featuresProperty?.short_description.substring(0, 240)}
+                                <span style={{ color: '#0a73c0'}}>  View More</span>
                               </div>
                               {/* /.End Property Description */}
                             </div>
@@ -121,7 +127,7 @@ export default  function FeaturesProperties() {
                             <div className="col col-xl-12">
                               <div className="align-items-sm-center d-sm-flex d-xl-block">
                                 <div className="d-flex justify-content-center align-items-end card-property-price flex-row gap-1">
-                                  <h2 className="m-0 fw-semibold text-primary">€{featuresProperty?.price}</h2>
+                                  <h2 className="m-0 fw-semibold text-primary">€{financial(featuresProperty?.price)}</h2>
                                   {/* <div> /month</div> */}
                                 </div>
                                 <div className="flex-grow-1 mt-2 ms-sm-3 ms-xl-0 mt-xl-2 text-center">

@@ -42,6 +42,10 @@ const PropertySticky = ({ property }) => {
             datePickerRef2.current.setOpen(true);
         }
     };
+    function financial(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+        
 
     return (
         <div className="h-details_content py-5">
@@ -82,7 +86,7 @@ const PropertySticky = ({ property }) => {
                             </div>
                             <div className="mb-5 border-bottom pb-5">
                                 {/* Start Title */}
-                                <h4 className="fw-semibold mb-4 text-capitalize">About the <span className="underline position-relative text-primary"> property</span></h4>
+                                <h4 className="fw-semibold mb-4 text-capitalize">About <span className="underline position-relative text-primary"> {property?.title}</span></h4>
                                 {/* End Title */}
                                
                                     <div dangerouslySetInnerHTML={{ __html: property?.long_description }} />                               
@@ -206,7 +210,7 @@ const PropertySticky = ({ property }) => {
                                 <div>Property {property?.listing_type}
 
                                 </div>
-                                <h2 className="fw-bold">€ {property?.price}</h2>
+                                <h2 className="fw-bold">€ {financial(property?.price)}</h2>
                                 {/* Start Tabs Nav */}
                                 <ul className="nav nav-tabs mb-5" role="tablist">
                                     <li className="nav-item" role="presentation">
