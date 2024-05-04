@@ -49,8 +49,6 @@ export default function UploadAgentImage({ PropertiesList, properties, user }) {
                 };
                 img.src = reader.result;
             };
-
-
             reader.readAsDataURL(file);
         }
 
@@ -70,7 +68,7 @@ export default function UploadAgentImage({ PropertiesList, properties, user }) {
             formData.append('files', files[i]);
         }
 
-        fetch(baseURL + '/uploadImage?propertyId=' + selectedOption + '&full_name=' + user?.full_name + '&location=user_profile', {
+        fetch(baseURL + '/uploadImage?propertyId=' + selectedOption + '&full_name=' + user?.full_name + '&location=user_profile' + '&user_id=' + user?.user_id  , {
             method: 'POST',
             // credentials: 'include',
             body: formData

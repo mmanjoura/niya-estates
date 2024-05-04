@@ -13,6 +13,10 @@ const PropertySticky = ({ property }) => {
     const [selectedDate1, setSelectedDate1] = useState(null);
     const [selectedDate2, setSelectedDate2] = useState(null);
 
+    const avatarUrl = window.localStorage.getItem('avatar-url');
+
+    console.log("Avatar URL", avatarUrl);
+
     const [user, setUser] = useState({});
     useEffect(() => {
         setUser(ProtectAdminRoute());
@@ -136,18 +140,14 @@ const PropertySticky = ({ property }) => {
                                             {/* Start Avatar Image */}
                                             <Link href="agent-details">
 
-                                                {property?.images
-                                                    ?.filter(img => img?.location === 'user_profile')
-                                                    .slice(0, 1) // Limit to the specified number of images
-                                                    .map((image, index) => (
-                                                        <img key={index}
-                                                            src={image?.image}
+                                              
+                                                        <img 
+                                                            src={avatarUrl}
                                                             alt=""
                                                             className="avatar-img rounded-circle"
                                                         />
 
-                                                    ))
-                                                }
+                                           
                                             </Link>
                                             {/* /.End Avatar Image */}
                                             <div className="align-items-center avatar-badge bg-primary d-flex justify-content-center position-absolute rounded-circle text-white">

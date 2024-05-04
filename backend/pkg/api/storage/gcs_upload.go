@@ -34,6 +34,7 @@ func UploadImagesHandler(c *gin.Context) {
 	projectID := config[googleProjectIDKey]
 	db := database.Database.DB
 
+	userID := c.Query("user_id")
 	propertyID, err := strconv.Atoi(c.Query("propertyId"))
 	fullName := c.Query("full_name")
 	if err != nil || propertyID == 0 {
@@ -45,7 +46,6 @@ func UploadImagesHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or missing image location"})
 		return
 	}
-	
 
 	// Replace spaces with underscores
 	fullName = strings.ReplaceAll(fullName, " ", "_")
@@ -92,7 +92,6 @@ func UploadImagesHandler(c *gin.Context) {
 
 	// Process each uploaded file
 	for _, file := range files {
-		// Check if we already big image for this product
 
 		// Convert the multipart file into io.Reader
 		fileReader, err := common.FileHeaderToReader(file)
@@ -130,7 +129,7 @@ func UploadImagesHandler(c *gin.Context) {
 			// Create a new object in the bucket
 			obj := bucket.Object(filePath)
 
-			 imgReader, err := common.ImageToReader(resizedImage)
+			imgReader, err := common.ImageToReader(resizedImage)
 
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -143,10 +142,20 @@ func UploadImagesHandler(c *gin.Context) {
 			}
 			img := fmt.Sprintf("https://storage.googleapis.com/%s/%s", bucketName, filePath)
 
-			// finally insert the image into the database
-			if err := insertImage(db, propertyID, imageSize.ID, img); err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
+			// Update the avatar URL in the users table
+			if location == "user_profile" {
+				userID, _ := strconv.Atoi(userID)
+				if err := updateAvatarURL(db, userID, img); err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
+			} else {
+				// finally insert the image into the database
+				if err := insertImage(db, propertyID, imageSize.ID, img); err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
+
 			}
 
 		}
@@ -166,15 +175,13 @@ func getImageSizes(db *sql.DB, location string) []models.ImageSize {
 	} else {
 		rows, err = db.Query("SELECT * FROM imageSizes where location not in ('user_profile', 'floor_plans')")
 	}
-	
+
 	if err != nil {
 		fmt.Println("Error querying the database: ", err)
 		return nil
 	}
-	
+
 	defer rows.Close()
-
-
 
 	imageSizes := []models.ImageSize{}
 	for rows.Next() {
@@ -196,7 +203,6 @@ func ImageResize(img image.Image, width, height int) (image.Image, error) {
 	resizedImage := imaging.Resize(img, width, height, imaging.Lanczos)
 
 	return resizedImage, nil
-
 
 }
 
@@ -235,3 +241,11 @@ func checkBigImageExist(db *sql.DB, propertyID int) (bool, error) {
 	return true, nil
 }
 
+// Update users tabe with the new avatar url
+func updateAvatarURL(db *sql.DB, userID int, avatarURL string) error {
+	_, err := db.Exec("UPDATE users SET avatar_url = $1 WHERE id = $2", avatarURL, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

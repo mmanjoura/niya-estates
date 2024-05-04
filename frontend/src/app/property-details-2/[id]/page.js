@@ -10,7 +10,8 @@ import SameArea from "@/components/same-area";
 
 export default function PropertyDetailsTwo({ params }) {
     const [properties, setProperties] = useState(null)
- 
+
+    // Get user avatar from local storage
     const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {

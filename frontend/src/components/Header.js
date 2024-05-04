@@ -57,8 +57,6 @@ export default function Header() {
     const [userEmail, setUserEmail] = useState(null);
     
     const path=usePathname()
-    
-    console.log("User Type", userType)
 
     function handleLogoutClick() {
     //   remove user info from local storage
@@ -67,6 +65,8 @@ export default function Header() {
         window.localStorage.removeItem('user_id');
         window.localStorage.removeItem('user_phone');
         window.localStorage.removeItem('user_email');
+        window.localStorage.removeItem('profile');
+        window.localStorage.removeItem('avatar-url');
       }
 
     useEffect(() => {
@@ -74,6 +74,7 @@ export default function Header() {
         setFullName(window.localStorage.getItem('full_name'));
         setUserPhone(window.localStorage.getItem('user_phone'));
         setUserEmail(window.localStorage.getItem('user_email'));
+
         const handleScroll = () => {
             const scroll = window.scrollY;
             if (scroll >= 81) {

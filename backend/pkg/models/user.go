@@ -23,6 +23,7 @@ type User struct {
 	PhoneNumber string `json:"phone_number"`
 	UserType    string `json:"user_type"`
 	Profile     string `json:"profile"`
+	AvatarUrl  string `json:"avatar_url"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

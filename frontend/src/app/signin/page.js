@@ -51,6 +51,7 @@ export default function SignIn() {
     window.localStorage.setItem('user_phone', data?.user?.phone_number);  
     window.localStorage.setItem('user_id', data?.user?.id);  
     window.localStorage.setItem('profile', data?.user?.profile);
+    window.localStorage.setItem('avatar-url', data?.user?.avatar_url);
     window.location.href = "/post-property";
   }
   return (

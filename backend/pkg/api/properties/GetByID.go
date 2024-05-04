@@ -20,29 +20,31 @@ func GetByID(c *gin.Context) {
 	db := database.Database.DB
 
 	var property models.Property
-	err = db.QueryRowContext(c, `SELECT id,
-			user_id,
-			title,
-			address,
-			city,				
-			property_type,
-			listing_type,
-			price,
-			living_area,
-			bedroom,
-			bathroom,
-			parking_lots
-			construction_area,
-			land_area,				
-			year_built,
-			short_description,
-			long_description,
-			youtube_video,
-			google_map,
-			status,
-			created_at,
-			updated_at
-	FROM Properties WHERE ID = ?`, propertyID).
+	err = db.QueryRowContext(c, `SELECT properties.id,
+	properties.user_id,
+	properties.title,
+	properties.address,
+	properties.city,				
+	properties.property_type,
+	properties.listing_type,
+	properties.price,
+	properties.living_area,
+	properties.bedroom,
+	properties.bathroom,
+	properties.parking_lots
+	properties.construction_area,
+	properties.land_area,				
+	properties.year_built,
+	properties.short_description,
+	properties.long_description,
+	properties.youtube_video,
+	properties.google_map,
+	properties.status,
+	users.avatar_url,
+	properties.created_at,
+	properties.updated_at
+	FROM Properties INNER JOIN users ON properties.user_id = users.id
+	WHERE properties.ID = ?`, propertyID).
 		Scan(&property.ID,
 			&property.UserID,
 			&property.Title,
@@ -63,6 +65,7 @@ func GetByID(c *gin.Context) {
 			&property.YoutubeVideo,
 			&property.GoogleMap,
 			&property.Status,
+			&property.AvatarURL,
 			&property.CreatedAt,
 			&property.UpdatedAt)
 

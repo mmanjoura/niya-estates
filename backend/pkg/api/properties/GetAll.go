@@ -31,29 +31,32 @@ func RetrieveProperties(c *gin.Context, db *sql.DB, limit, offset int) ([]models
 
 	properties := []models.Property{}
 
-	rows, err := db.QueryContext(c, `SELECT id,
-	user_id,
-	title,
-	address,
-	city,				
-	property_type,
-	listing_type,
-	price,
-	living_area,
-	bedroom,
-	bathroom,
-	parking_lots,
-	construction_area,
-	land_area,				
-	year_built,
-	short_description,
-	long_description,
-	youtube_video,
-	google_map,
-	status,
-	created_at,
-	updated_at
-	FROM Properties   ORDER BY id DESC `+
+	rows, err := db.QueryContext(c, `SELECT properties.id,
+	properties.user_id,
+	properties.title,
+	properties.address,
+	properties.city,				
+	properties.property_type,
+	properties.listing_type,
+	properties.price,
+	properties.living_area,
+	properties.bedroom,
+	properties.bathroom,
+	properties.parking_lots,
+	properties.construction_area,
+	properties.land_area,				
+	properties.year_built,
+	properties.short_description,
+	properties.long_description,
+	properties.youtube_video,
+	properties.google_map,
+	properties.status,
+	users.avatar_url,
+	properties.created_at,
+	properties.updated_at
+	FROM Properties inner join users on properties.user_id = users.id
+	
+	ORDER BY properties.id DESC `+
 		database.FormatLimitOffset(limit, offset))
 
 	if err != nil {
@@ -112,6 +115,7 @@ func scanProperty(rows *sql.Rows) (models.Property, error) {
 		&property.YoutubeVideo ,
 		&property.GoogleMap,
 		&property.Status,
+		&property.AvatarURL,
 		(*time.Time)(&property.CreatedAt),
 		(*time.Time)(&property.UpdatedAt),
 	)
