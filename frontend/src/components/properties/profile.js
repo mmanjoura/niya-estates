@@ -71,8 +71,9 @@ const Profile = ({ user, onSubmit, onUserTypeChange }) => {
             aria-label="Default select example"
             onChange={handleUserTypeChange}                           >
             <option value={0}>Select</option>
-            <option value={1}>Estate Agent</option>
-            <option value={2}>Property Owner</option>
+            <option value={1}>Property Owner</option>
+            <option value={2}>Property Manager</option>
+            <option value={3}>Property Agent</option>
           </select>
         </div>
         {/* /.End Form Group */}

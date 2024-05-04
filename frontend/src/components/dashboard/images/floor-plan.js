@@ -74,7 +74,7 @@ export default function UploadFloorImage({ PropertiesList, properties, user }) {
             formData.append('files', files[i]);
         }
 
-        fetch(baseURL + '/uploadImage?propertyId=' + selectedOption + '&full_name=' + user?.full_name, {
+        fetch(baseURL + '/uploadImage?propertyId=' + selectedOption + '&full_name=' + user?.full_name + '&location=floor_plans', {
             method: 'POST',
             // credentials: 'include',
             body: formData

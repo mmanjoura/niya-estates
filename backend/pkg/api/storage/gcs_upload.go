@@ -40,6 +40,12 @@ func UploadImagesHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or missing ID"})
 		return
 	}
+	location := c.Query("location")
+	if location == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or missing image location"})
+		return
+	}
+	
 
 	// Replace spaces with underscores
 	fullName = strings.ReplaceAll(fullName, " ", "_")
@@ -103,7 +109,7 @@ func UploadImagesHandler(c *gin.Context) {
 		}
 
 		// Get the sizes of the images to be created
-		imageSizes := getImageSizes(db)
+		imageSizes := getImageSizes(db, location)
 		if imageSizes == nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get image sizes"})
 			return
@@ -112,10 +118,6 @@ func UploadImagesHandler(c *gin.Context) {
 		// Iterate over the image sizes and create a new image for each size
 		for _, imageSize := range imageSizes {
 
-			// if imageSizes is > 1 and imageSize.location = floor_plans, skip the iteration
-			if len(imageSizes) > 1 && imageSize.Location == "floor_plans" {
-				continue
-			}
 			// Resize the image to the specified size
 			resizedImage, err := ImageResize(img, imageSize.Width, imageSize.Height)
 
@@ -152,15 +154,27 @@ func UploadImagesHandler(c *gin.Context) {
 }
 
 // Create a private member that returns a slice of ImageSizes
-func getImageSizes(db *sql.DB) []models.ImageSize {
+func getImageSizes(db *sql.DB, location string) []models.ImageSize {
+
+	var rows *sql.Rows
+	var err error
 
 	// Query the database for all image sizes
-	rows, err := db.Query("SELECT * FROM imageSizes")
+	// if location is not user_profile or floor_plans
+	if location == "user_profile" || location == "floor_plans" {
+		rows, err = db.Query("SELECT * FROM imageSizes where location = $1", location)
+	} else {
+		rows, err = db.Query("SELECT * FROM imageSizes where location not in ('user_profile', 'floor_plans')")
+	}
+	
 	if err != nil {
 		fmt.Println("Error querying the database: ", err)
 		return nil
 	}
+	
 	defer rows.Close()
+
+
 
 	imageSizes := []models.ImageSize{}
 	for rows.Next() {
@@ -178,19 +192,12 @@ func getImageSizes(db *sql.DB) []models.ImageSize {
 
 func ImageResize(img image.Image, width, height int) (image.Image, error) {
 
-	// find the current size of the image
-	bounds := img.Bounds()
-	imgWidth := bounds.Dx()
-	imgHeight := bounds.Dy()
+	// Resize the image to the specified width and height
+	resizedImage := imaging.Resize(img, width, height, imaging.Lanczos)
 
-	if imgWidth <= 853 || imgHeight <= 568 {
-		return nil, fmt.Errorf("Invalid size: %dx%d", imgWidth, imgHeight, "The size should be between 853 and 568")
-	}
+	return resizedImage, nil
 
-	croppedImage := imaging.CropAnchor(img, 800, 600, imaging.Center)
-	img = imaging.Resize(croppedImage, width, height, imaging.Lanczos)
 
-	return img, nil
 }
 
 func uploadFileToStorage(ctx context.Context, obj *storage.ObjectHandle, img io.Reader) error {

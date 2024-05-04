@@ -7,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import Link from 'next/link';
 import Amenities from './properties/amenities';
 import ProtectAdminRoute from './utils/ProtectAdminRoute';
+import Image from 'next/image';
 
 const PropertySticky = ({ property }) => {
     const [selectedDate1, setSelectedDate1] = useState(null);
@@ -83,9 +84,9 @@ const PropertySticky = ({ property }) => {
                                 {/* Start Title */}
                                 <h4 className="fw-semibold mb-4 text-capitalize">About the <span className="underline position-relative text-primary"> property</span></h4>
                                 {/* End Title */}
-                                <p>
-                                    {property?.long_description}
-                                </p>
+                               
+                                    <div dangerouslySetInnerHTML={{ __html: property?.long_description }} />                               
+                
 
                             </div>
                             {/* Start Amenities Content */}
@@ -107,10 +108,11 @@ const PropertySticky = ({ property }) => {
                                     .slice(0, 1) // Limit to the specified number of images
                                     .map((image, index) => (
 
-                                        <img key={index}
+                                        <img key={index} style={{ backgroundColor: 'white' }}
                                             src={image?.image}
                                             alt=""
-                                            className="h-100 w-100 object-fit-cover"
+                                            className="img-fluid"
+
                                         />
 
                                     ))
@@ -131,7 +133,7 @@ const PropertySticky = ({ property }) => {
                                             <Link href="agent-details">
 
                                                 {property?.images
-                                                    ?.filter(img => img?.location === 'floor_plans')
+                                                    ?.filter(img => img?.location === 'user_profile')
                                                     .slice(0, 1) // Limit to the specified number of images
                                                     .map((image, index) => (
                                                         <img key={index}

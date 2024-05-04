@@ -53,6 +53,8 @@ export default function Header() {
     const [hasLogo, setHasLogo] = useState(false);
     const [userType, setUserType] = useState(null);
     const [fullName, setFullName] = useState(null);
+    const [userPhone, setUserPhone] = useState(null);
+    const [userEmail, setUserEmail] = useState(null);
     
     const path=usePathname()
     
@@ -62,11 +64,16 @@ export default function Header() {
     //   remove user info from local storage
         window.localStorage.removeItem('user_type');
         window.localStorage.removeItem('full_name');
+        window.localStorage.removeItem('user_id');
+        window.localStorage.removeItem('user_phone');
+        window.localStorage.removeItem('user_email');
       }
 
     useEffect(() => {
         setUserType(window.localStorage.getItem('user_type'));
         setFullName(window.localStorage.getItem('full_name'));
+        setUserPhone(window.localStorage.getItem('user_phone'));
+        setUserEmail(window.localStorage.getItem('user_email'));
         const handleScroll = () => {
             const scroll = window.scrollY;
             if (scroll >= 81) {

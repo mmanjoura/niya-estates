@@ -2,15 +2,21 @@ package properties
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/mmanjoura/niya-estates/backend/pkg/database"
 	"github.com/mmanjoura/niya-estates/backend/pkg/models"
 
 	"github.com/gin-gonic/gin"
-
 )
 
+const (
+	ADMINISTRATOR = iota + 1
+	PROPERTY_OWNER
+	PROPERTY_MANAGER
+	ESTATE_AGENT
+)
 
 func Create(c *gin.Context) {
 	var newProperty models.Property
@@ -20,11 +26,39 @@ func Create(c *gin.Context) {
 		return
 	}
 
+	// Get Profile and UserType the model
+	userProfile := newProperty.Profile
+	userType, _ := strconv.Atoi(newProperty.UserType) 
+	userId := newProperty.UserID
+
+	var user_type string
+
+	switch userType {
+	case ADMINISTRATOR:
+		user_type = "Administrator"
+	case PROPERTY_OWNER:
+		user_type = "Property Owner"
+	case PROPERTY_MANAGER:
+		user_type = "Property Manager"
+	case ESTATE_AGENT:
+		user_type = "Property Agent"
+	
+	}
+
+	// Update user table with profile and userType
+	db := database.Database.DB
+	_, err := db.ExecContext(c, `UPDATE users SET profile = ?, user_type = ? WHERE id = ?`, userProfile, user_type, userId)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	propertyAmenities := newProperty.Amenities
 
 	//Get listing type given listype id
 	var listingType string
-	err := database.Database.DB.QueryRow("SELECT name FROM listingTypes WHERE id = ?", newProperty.ListingType).Scan(&listingType)
+	err = database.Database.DB.QueryRow("SELECT name FROM listingTypes WHERE id = ?", newProperty.ListingType).Scan(&listingType)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -39,10 +73,6 @@ func Create(c *gin.Context) {
 		return
 	}
 	newProperty.PropertyType = propertyType
-	
-
-
-	db := database.Database.DB
 
 	result, err := db.ExecContext(c, `
 			INSERT INTO properties (
@@ -68,8 +98,8 @@ func Create(c *gin.Context) {
 				created_at,
 				updated_at
 			)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,	
-		newProperty.UserID,	
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		newProperty.UserID,
 		newProperty.Title,
 		newProperty.Address,
 		newProperty.City,
@@ -88,7 +118,7 @@ func Create(c *gin.Context) {
 		newProperty.YoutubeVideo,
 		newProperty.GoogleMap,
 		newProperty.Status,
-			
+
 		time.Now(),
 		time.Now())
 
@@ -124,7 +154,7 @@ func Create(c *gin.Context) {
 									heater,
 									air_conditioning
 			)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,	
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		id,
 		propertyAmenities.Garden,
 		propertyAmenities.Pool,
@@ -143,17 +173,17 @@ func Create(c *gin.Context) {
 		propertyAmenities.Heater,
 		propertyAmenities.AirConditioning,
 	)
-		if err != nil {
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
-		}
-		id, _ = amenity.LastInsertId()
-		newProperty.Amenities.Id = int(id)
+	}
+	id, _ = amenity.LastInsertId()
+	newProperty.Amenities.Id = int(id)
 
-		if err != nil {
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
-		}
+	}
 
 	c.JSON(http.StatusOK, gin.H{"data": newProperty})
 }

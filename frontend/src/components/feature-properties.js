@@ -91,7 +91,7 @@ export default  function FeaturesProperties() {
                               </div>
                               {/* Start Property Description */}
                               <div className="mt-3">
-                                {featuresProperty?.description}
+                                {featuresProperty?.short_description}
                               </div>
                               {/* /.End Property Description */}
                             </div>

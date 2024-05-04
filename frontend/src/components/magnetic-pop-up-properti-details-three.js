@@ -83,7 +83,8 @@ function PopUpImageGalleryThree({ property }) {
                             <i className="fa-solid fa-share-nodes me-2" />
                             Share
                         </button>
-                        <a href="#" id="browse-gallery-link" className="btn btn-sm btn-primary">
+
+                        <a href="#" id="browse-gallery-link" className="btn btn-sm btn-primary" >
                             <i className="fa-solid fa-image me-2" />
                             Browse Gallery {property?.images ?.filter(img => img?.location === 'product_details').length} images
                         </a>

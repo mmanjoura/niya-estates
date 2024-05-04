@@ -74,7 +74,7 @@ export default function UploadPropertyImages({ PropertiesList, properties, user 
             formData.append('files', files[i]);
         }
 
-        fetch(baseURL + '/uploadImage?propertyId=' + selectedOption + '&full_name=' + user?.full_name, {
+        fetch(baseURL + '/uploadImage?propertyId=' + selectedOption + '&full_name=' + user?.full_name + '&location=property', {
             method: 'POST',
             // credentials: 'include',
             body: formData
