@@ -28,7 +28,7 @@ export const BreadCrumbs = () => {
       <div className="border-start col-auto">
         <ol className="align-items-center breadcrumb fw-medium mb-0">
           <li className="breadcrumb-item d-flex align-items-center">
-            <Link href="post-image" className="text-decoration-none">
+            <Link href="/backup" className="text-decoration-none">
               <i className="fa-solid fa-database fs-18" style={{ padding: '0 15px' }}></i>
               Datagase Backup
             </Link>

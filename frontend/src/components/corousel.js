@@ -17,211 +17,75 @@ const OwlCarousel = dynamic(() => import("react-owl-carousel"), {
 
 
 const Carousel = () => {
-    const options = {
-        loop: true,
-        margin: 20,
-        nav: true,
-        dots: false,
-        responsive: {
-            0: {
-                items: 1
-            },
-            576: {
-                items: 2
-            },
-            992: {
-                items: 3
-            }
-        }
-    };
+
 
     return (
-        <OwlCarousel className='owl-theme blog-carousel' {...options} >
-            {/* Start Grid Post */}
-            <div className="post grid-post" data-aos="fade" data-aos-delay={300}>
-                <div className="grid-post__thumb position-relative">
-                    <Link
-                        href="blog-details"
-                        className="align-items-center d-flex justify-content-center overflow-hidden position-relative rounded-3 thumb-overlay"
-                    >
-                        <figure className="w-100 m-0">
-                            <img
-                                src="assets/img/blog/01-md.jpg"
-                                className="img-fluid w-100"
-                                alt=""
-                            />
-                        </figure>
-                        <div className="bottom-0 opacity-0 position-absolute start-0 thumb-content top-0 w-100 z-1">
-                            <div className="position-absolute text-center top-50 w-100">
-                                <h4 className="d-inline-block fs-12 fw-medium l-spacing-2 link text-white">
-                                    Continue Reading
-                                    <i className="fa fa-angle-right text-white" />
-                                </h4>
-                            </div>
-                        </div>
-                    </Link>
-                    {/* /.image */}
-                </div>
-                <div className="post-info text-center">
-                    <div className="bg-white m-auto position-relative post-header z-1 pb-0">
-                        {/* Start Meta Info */}
-                        <div className="align-items-start flex-wrap fs-15 gap-2 hstack text-capitalize mb-1 justify-content-center">
-                            <div className="text-primary fw-medium">Renovation</div>
-                            <span className="vr" />
-                            <div>jun 23, 2023</div>
-                        </div>
-                        {/* /.End Meta Info */}
-                        {/* Start Post Title */}
-                        <h5 className="post-title fw-semibold fs-19 mb-3">
-                            <Link href="#">
-                                There are many variations of passages of Lorem Ipsum
-                                available.
-                            </Link>
-                        </h5>
-                        {/* /.End Post Title */}
-                    </div>
-                </div>
+        <div className="angled bg-white py-5 wrapper lower-start">
+          <div className="container py-4">
+            <div className="row">
+              <div className="col-md-10 offset-md-1">
+                {/* Start Section Header Title */}
+      
+                {/*/. End Section Header */}
+              </div>
             </div>
-            {/* /.End Grid Post */}
-            {/* Start Grid Post */}
-            <div className="post grid-post">
-                <div
-                    className="grid-post__thumb position-relative"
-                    data-aos="fade"
-                    data-aos-delay={400}
-                >
-                    <Link
-                        href="blog-details"
-                        className="align-items-center d-flex justify-content-center overflow-hidden position-relative rounded-3 thumb-overlay"
-                    >
-                        <figure className="w-100 m-0">
-                            <img
-                                src="assets/img/blog/02-md.jpg"
-                                className="img-fluid w-100"
-                                alt=""
-                            />
-                        </figure>
-                        <div className="bottom-0 opacity-0 position-absolute start-0 thumb-content top-0 w-100 z-1">
-                            <div className="position-absolute text-center top-50 w-100">
-                                <h4 className="d-inline-block fs-12 fw-medium l-spacing-2 link text-white">
-                                    Continue Reading
-                                    <i className="fa fa-angle-right text-white" />
-                                </h4>
-                            </div>
-                        </div>
-                    </Link>
+            <div className="row justify-content-center">
+              <div className="col-md-12 d-flex justify-content-center">
+                <div className="col-md-3">
+                  <img
+                    src="assets/img/brands/prestigia_0.jpg"
+                    className="img-fluid w-80"
+                    alt=""
+                    width={220}
+                    height={164}
+                  />
+                  <div className="bottom-0 opacity-0 position-absolute start-0 thumb-content top-0 w-100 z-1">
+                    {/* Thumbnail content */}
+                  </div>
                 </div>
-                <div className="post-info text-center">
-                    <div className="bg-white m-auto position-relative post-header z-1 pb-0">
-                        {/* Start Meta Info */}
-                        <div className="align-items-start flex-wrap fs-15 gap-2 hstack text-capitalize mb-1 justify-content-center">
-                            <div className="text-primary fw-medium">Construction</div>
-                            <span className="vr" />
-                            <div>jun 23, 2023</div>
-                        </div>
-                        {/* /.End Meta Info */}
-                        {/* Start Post Title */}
-                        <h5 className="post-title fw-semibold fs-19 mb-3">
-                            <Link href="#">
-                                All the Lorem Ipsum generators on the Internet tend to repeat
-                            </Link>
-                        </h5>
-                        {/* /.End Post Title */}
-                    </div>
+                <div className="col-md-3">
+                  <img
+                    src="./assets/img/brands/alliances_0.jpg"
+                    className="img-fluid w-80"
+                    alt=""
+                    width={220}
+                    height={164}
+                  />
+                  <div className="bottom-0 opacity-0 position-absolute start-0 thumb-content top-0 w-100 z-1">
+                    {/* Thumbnail content */}
+                  </div>
                 </div>
+                <div className="col-md-3">
+                  <img
+                    src="assets/img/brands/Alomrane_0.jpg"
+                    className="img-fluid w-80"
+                    alt=""
+                    width={220}
+                    height={164}
+                  />
+                  <div className="bottom-0 opacity-0 position-absolute start-0 thumb-content top-0 w-100 z-1">
+                    {/* Thumbnail content */}
+                  </div>
+                </div>
+                <div className="col-md-3">
+                  <img
+                    src="assets/img/brands/Chaabi_0.jpg"
+                    className="img-fluid w-80"
+                    alt=""
+                    width={220}
+                    height={164}
+                  />
+                  <div className="bottom-0 opacity-0 position-absolute start-0 thumb-content top-0 w-100 z-1">
+                    {/* Thumbnail content */}
+                  </div>
+                  
+                </div>
+              </div>
             </div>
-            {/* /.End Grid Post */}
-            {/* Start Grid Post */}
-            <div className="post grid-post" data-aos="fade" data-aos-delay={500}>
-                <div className="grid-post__thumb position-relative">
-                    <Link
-                        href="blog-details"
-                        className="align-items-center d-flex justify-content-center overflow-hidden position-relative rounded-3 thumb-overlay"
-                    >
-                        <figure className="w-100 m-0">
-                            <img
-                                src="assets/img/blog/06-md.jpg"
-                                className="img-fluid w-100"
-                                alt=""
-                            />
-                        </figure>
-                        <div className="bottom-0 opacity-0 position-absolute start-0 thumb-content top-0 w-100 z-1">
-                            <div className="position-absolute text-center top-50 w-100">
-                                <h4 className="d-inline-block fs-12 fw-medium l-spacing-2 link text-white">
-                                    Continue Reading
-                                    <i className="fa fa-angle-right text-white" />
-                                </h4>
-                            </div>
-                        </div>
-                    </Link>
-                </div>
-                <div className="post-info text-center">
-                    <div className="bg-white m-auto position-relative post-header z-1 pb-0">
-                        {/* Start Meta Info */}
-                        <div className="align-items-start flex-wrap fs-15 gap-2 hstack text-capitalize mb-1 justify-content-center">
-                            <div className="text-primary fw-medium">Design</div>
-                            <span className="vr" />
-                            <div>jun 23, 2023</div>
-                        </div>
-                        {/* /.End Meta Info */}
-                        {/* Start Post Title */}
-                        <h5 className="post-title fw-semibold fs-17 mb-3">
-                            <Link href="#">
-
-                                Various versions have evolved over the years, sometimes
-                            </Link>
-                        </h5>
-                        {/* /.End Post Title */}
-                    </div>
-                </div>
-            </div>
-            {/* /.End Grid Post */}
-            {/* Start Grid Post */}
-            <div className="post grid-post" data-aos="fade" data-aos-delay={600}>
-                <div className="grid-post__thumb position-relative">
-                    <Link
-                        href="blog-details"
-                        className="align-items-center d-flex justify-content-center overflow-hidden position-relative rounded-3 thumb-overlay"
-                    >
-                        <figure className="w-100 m-0">
-                            <img
-                                src="assets/img/blog/05-md.jpg"
-                                className="img-fluid w-100"
-                                alt=""
-                            />
-                        </figure>
-                        <div className="bottom-0 opacity-0 position-absolute start-0 thumb-content top-0 w-100 z-1">
-                            <div className="position-absolute text-center top-50 w-100">
-                                <h4 className="d-inline-block fs-12 fw-medium l-spacing-2 link text-white">
-                                    Continue Reading
-                                    <i className="fa fa-angle-right text-white" />
-                                </h4>
-                            </div>
-                        </div>
-                    </Link>
-                </div>
-                <div className="post-info text-center">
-                    <div className="bg-white m-auto position-relative post-header z-1 pb-0">
-                        {/* Start Meta Info */}
-                        <div className="align-items-start flex-wrap fs-15 gap-2 hstack text-capitalize mb-1 justify-content-center">
-                            <div className="text-primary fw-medium">Renovation</div>
-                            <span className="vr" />
-                            <div>jun 23, 2023</div>
-                        </div>
-                        {/* /.End Meta Info */}
-                        {/* Start Post Title */}
-                        <h5 className="post-title fw-semibold fs-17 mb-3">
-                            <Link href="#">
-                                It was popularised in the 1960s with the release of Letraset
-                                sheets
-                            </Link>
-                        </h5>
-                        {/* /.End Post Title */}
-                    </div>
-                </div>
-            </div>
-            {/* /.End Grid Post */}
-        </OwlCarousel>
-    );
+          </div>
+        </div>
+      );
+      
+      
 };
 export default Carousel;

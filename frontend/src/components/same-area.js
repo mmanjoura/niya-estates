@@ -42,7 +42,7 @@ export default  function FeaturesProperties() {
                     data-aos-delay={300}
                     key={featuresProperty.id}
                   >
-                    <Link href={`property-details-2/${featuresProperty.id}`} className="card-link" />
+                    <Link href={`/property-details-2/${featuresProperty.id}`} className="card-link" />
                     <div className="card-body p-0">
                       <div className="g-0 row">
                         <div className="bg-white col-lg-5 col-md-6 col-xl-3 position-relative">

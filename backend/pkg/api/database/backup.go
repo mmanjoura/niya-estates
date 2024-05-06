@@ -15,7 +15,7 @@ import (
 
 // Constants for configuration keys
 const (
-	googleBucketNameKey = "BACKUPS-GOOGLE-BUCKET"
+	googleBucketNameKey = "GOOGLE-BACKUPS-BUCKET"
 	googleProjectIDKey  = "GOOGLE-PROJECT-ID"
 )
 

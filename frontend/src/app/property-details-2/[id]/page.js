@@ -106,12 +106,7 @@ export default function PropertyDetailsTwo({ params }) {
                                     <h2 className="h1 fw-semibold mb-3 section-header__title text-capitalize">More <span className="underline position-relative text-primary">available </span> in the same area </h2>
                                     {/* /.End Section Header Title */}
                                     {/* Start Section Header Sub Title */}
-                                    <div className="sub-title fs-16">
-
-                                        Our guests always travel the world in style. Mention @Kempinski
-                                        <br className="d-none d-lg-block" /> on Instagram for a chance
-                                        to be featured!
-                                    </div>
+                        
                                     {/* /.End Section Header Sub Title */}
                                 </div>
                                 {/*/. End Section Header */}

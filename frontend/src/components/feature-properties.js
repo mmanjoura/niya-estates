@@ -1,7 +1,5 @@
 'use client';
 import Link from 'next/link';
-import React from 'react';
-import FeaturesPropertiesData from "../data/features-properties.json"
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -41,14 +39,6 @@ export default  function FeaturesProperties() {
                 {/* Start Section Header title */}
                 <h2 className="h1 fw-semibold mb-3 section-header__title text-capitalize">Featured <span className="underline position-relative text-primary">Properties</span></h2>
                 {/* /.End Section Header Title */}
-                {/* Start Section Header Sub Title */}
-                <div className="sub-title fs-16">
-                  It is a long established fact that a reader will be distracted by
-                  the
-                  <br className="d-none d-lg-block" /> readable content of a page
-                  when looking at its layout.
-                </div>
-                {/* /.End Section Header Sub Title */}
               </div>
               {/*/. End Section Header */}
             </div>
